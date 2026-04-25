@@ -207,3 +207,15 @@ h1 {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+.space-y-8 > * + * { margin-top: 2rem; }
+.tracking-widest { letter-spacing: 0.1em; }
+.font-bold { font-weight: 700; }
+.border-l-4 { border-left-width: 4px; }
+.text-\[10px\] { font-size: 0.625rem; }
+.text-xs { font-size: 0.75rem; }
+.text-violet-400 { color: #a78bfa; }
+.bg-white\/5 { background-color: rgba(255, 255, 255, 0.05); }
+.border-white\/10 { border-color: rgba(255, 255, 255, 0.1); }
+.border-r { border-right-width: 1px; }
+.pr-8 { padding-right: 2rem; }
+.focus\:ring-0:focus { outline: none; box-shadow: none; }
