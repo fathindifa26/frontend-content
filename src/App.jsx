@@ -52,7 +52,9 @@ function App() {
       <div className="grid grid-cols-2 gap-4 mt-2">
         {Object.entries(data).map(([key, value]) => (
           <div key={key} className="flex flex-col">
-            <span className="text-[10px] uppercase text-gray-500">{key.replace(/_/g, ' ')}</span>
+            <span className="text-[10px] uppercase text-gray-500">
+              {key.replace(/text_overlay_/g, 'Overlay ').replace(/_/g, ' ')}
+            </span>
             <span className="value">
               {typeof value === 'boolean' ? (
                 <span className={`status-badge ${value ? 'status-true' : 'status-false'}`}>
@@ -60,8 +62,6 @@ function App() {
                 </span>
               ) : value === null ? (
                 <span className="text-gray-600">null</span>
-              ) : typeof value === 'object' ? (
-                JSON.stringify(value)
               ) : (
                 value
               )}
