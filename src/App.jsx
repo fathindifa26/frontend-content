@@ -162,6 +162,7 @@ function App() {
                     <AnalysisSection title="Visual Analysis" data={result.visual} />
                     <AnalysisSection title="Audio Analysis" data={result.audio} />
                     <AnalysisSection title="Semantic Content" data={result.semantic} />
+                    <AnalysisSection title="Scraped Data (Dummy)" data={result.scraped_data} />
                   </motion.div>
                 )}
               </AnimatePresence>
