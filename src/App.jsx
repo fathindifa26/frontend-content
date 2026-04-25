@@ -159,10 +159,13 @@ function App() {
                     exit={{ opacity: 0 }}
                     className="grid-analysis"
                   >
-                    <AnalysisSection title="Visual Analysis" data={result.visual} />
-                    <AnalysisSection title="Audio Analysis" data={result.audio} />
-                    <AnalysisSection title="Semantic Content" data={result.semantic} />
-                    <AnalysisSection title="Scraped Data (Dummy)" data={result.scraped_data} />
+                    {Object.entries(result).map(([sectionKey, sectionData]) => (
+                      <AnalysisSection 
+                        key={sectionKey} 
+                        title={`${sectionKey} Analysis`} 
+                        data={sectionData} 
+                      />
+                    ))}
                   </motion.div>
                 )}
               </AnimatePresence>
