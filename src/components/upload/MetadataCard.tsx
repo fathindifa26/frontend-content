@@ -44,6 +44,10 @@ export function MetadataCard({ data }: MetadataCardProps) {
             <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Posting Day</p>
             <p className="text-sm text-white font-medium capitalize">{temporal.posting_day || "Monday"}</p>
           </div>
+          <div>
+            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Language</p>
+            <p className="text-sm text-white font-medium capitalize">{semantic.language || "English"}</p>
+          </div>
           <div className="col-span-2">
             <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Seasonality</p>
             <p className="text-sm text-white font-medium capitalize">{temporal.seasonality || "None"}</p>
