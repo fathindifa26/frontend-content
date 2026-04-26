@@ -1,6 +1,12 @@
 import { Video } from "lucide-react";
 
-export function TimelineCard() {
+interface TimelineCardProps {
+  data?: any;
+}
+
+export function TimelineCard({ data }: TimelineCardProps) {
+  const visual = data || {};
+
   return (
     <div className="col-span-12 lg:col-span-9 glass-panel p-6 rounded-[32px] space-y-6">
       <div className="flex items-center justify-between">
@@ -20,7 +26,7 @@ export function TimelineCard() {
             <div className="flex justify-between items-end">
                <span className="text-[10px] font-mono text-white/50">00:00.00</span>
                <span className="text-[10px] font-mono text-white/50">00:15.00 (Scene Cut)</span>
-               <span className="text-[10px] font-mono text-white/50">00:42.15</span>
+               <span className="text-[10px] font-mono text-white/50">{visual.duration_min ? `${visual.duration_min} min` : "00:42.15"}</span>
             </div>
             <div className="h-2 bg-white/10 rounded-full relative overflow-hidden">
                <div className="absolute h-full bg-primary w-2/3 rounded-full shadow-[0_0_10px_rgba(79,70,229,0.5)]" />
@@ -33,19 +39,19 @@ export function TimelineCard() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Faces Detected</p>
-          <p className="text-3xl font-bold text-white">02</p>
+          <p className="text-3xl font-bold text-white">{visual.face_present ?? "02"}</p>
         </div>
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Text Overlays</p>
-          <p className="text-3xl font-bold text-white">05</p>
+          <p className="text-3xl font-bold text-white">{visual.text_overlay_count ?? "05"}</p>
         </div>
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Editing Pace</p>
-          <p className="text-3xl font-bold text-white">12</p>
+          <p className="text-3xl font-bold text-white">{visual.scene_cut_estimate ?? "12"}</p>
         </div>
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Face Emotions</p>
-          <p className="text-sm font-bold text-white mt-2">Smile, Surprised</p>
+          <p className="text-sm font-bold text-white mt-2 capitalize">{visual.face_emotion || "Smile, Surprised"}</p>
         </div>
       </div>
     </div>

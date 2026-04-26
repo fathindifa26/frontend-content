@@ -1,7 +1,19 @@
 import { Sparkles } from "lucide-react";
 import { MetricGauge } from "../common/MetricGauge";
 
-export function MarketComparison() {
+interface MarketComparisonProps {
+  data?: any;
+}
+
+export function MarketComparison({ data }: MarketComparisonProps) {
+  const positioning = data?.positioning || {};
+  
+  // Mapping some metrics to percentiles from market comparison
+  const retentionVal = Math.round(positioning.followers?.percentile ?? 90);
+  const clickThroughVal = Math.round(positioning.hook_duration_sec?.percentile ?? 60);
+  const engagementVal = Math.round(positioning.word_density_wps?.percentile ?? 75);
+  const shareVal = Math.round(positioning.scene_cut_estimate?.percentile ?? 20);
+
   return (
     <div className="col-span-12 glass-panel p-8 rounded-[40px] space-y-8">
        <div className="flex items-center justify-between">
@@ -16,10 +28,10 @@ export function MarketComparison() {
        </div>
 
        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-4">
-          <MetricGauge value={90} label="Retention Rate" color="tertiary" />
-          <MetricGauge value={60} label="Click Through" color="secondary" />
-          <MetricGauge value={75} label="Engagement" color="tertiary" />
-          <MetricGauge value={20} label="Share Frequency" color="secondary" />
+          <MetricGauge value={retentionVal} label="Retention Rate" color="tertiary" />
+          <MetricGauge value={clickThroughVal} label="Click Through" color="secondary" />
+          <MetricGauge value={engagementVal} label="Engagement" color="tertiary" />
+          <MetricGauge value={shareVal} label="Share Frequency" color="secondary" />
        </div>
 
        <div className="p-6 bg-primary/10 rounded-[28px] border border-primary/20 flex items-start space-x-5 relative overflow-hidden group">
@@ -30,7 +42,9 @@ export function MarketComparison() {
           <div className="space-y-2">
              <p className="text-sm font-bold text-white uppercase tracking-widest">AI Recommendation</p>
              <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
-               To reach the top 10% in the 'Global Market', consider increasing scene cut frequency by <span className="text-primary font-bold">15%</span> and using a higher-tempo background track to match current trending tutorial formats.
+               {positioning.scene_cut_estimate?.percentile < 50 
+                 ? `To reach the top 10% in the 'Global Market', consider increasing scene cut frequency by 15% and using a higher-tempo background track.`
+                 : `Your editing pace is already above average. Focus on optimizing the Hook Message to further improve retention.`}
              </p>
           </div>
        </div>

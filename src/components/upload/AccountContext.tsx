@@ -1,14 +1,20 @@
 import { Users, Eye, Calendar, TrendingUp } from "lucide-react";
 
-export function AccountContext() {
+interface AccountContextProps {
+  data?: any;
+}
+
+export function AccountContext({ data }: AccountContextProps) {
+  const profile = data || {};
+
   return (
     <div className="col-span-12 lg:col-span-4 glass-panel p-6 rounded-[32px] space-y-6">
        <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Account Context</h3>
        <div className="space-y-4">
           {[
-            { icon: Users, label: "Followers", value: "1.2M" },
-            { icon: Eye, label: "Avg. Views", value: "450K" },
-            { icon: Calendar, label: "Post Frequency", value: "4.2 / week" },
+            { icon: Users, label: "Followers", value: profile.followers?.toLocaleString() || "1.2M" },
+            { icon: Eye, label: "Avg. Views", value: profile.historical_avg_views?.toLocaleString() || "450K" },
+            { icon: Calendar, label: "Post Frequency", value: profile.posting_frequency ? `${profile.posting_frequency} / week` : "4.2 / week" },
           ].map((item, i) => (
             <div key={i} className="flex items-center justify-between p-3 bg-white/3 rounded-xl border border-white/5">
                <div className="flex items-center space-x-3 text-on-surface-variant">

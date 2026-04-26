@@ -1,6 +1,14 @@
 import { HelpCircle, CheckCircle } from "lucide-react";
 
-export function MetadataCard() {
+interface MetadataCardProps {
+  data?: any;
+}
+
+export function MetadataCard({ data }: MetadataCardProps) {
+  const visual = data?.visual || {};
+  const temporal = data?.temporal || {};
+  const semantic = data?.semantic || {};
+
   return (
     <div className="col-span-12 lg:col-span-3 glass-panel p-6 rounded-[32px] space-y-6 flex flex-col justify-between">
       <div className="space-y-6">
@@ -22,23 +30,23 @@ export function MetadataCard() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Platform</p>
-            <p className="text-sm text-white font-medium">Instagram Reels</p>
+            <p className="text-sm text-white font-medium">{semantic.format || "Instagram Reels"}</p>
           </div>
           <div>
             <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Duration</p>
-            <p className="text-sm text-white font-medium">00:42.15</p>
+            <p className="text-sm text-white font-medium">{visual.duration_min ? `${visual.duration_min} min` : "00:42.15"}</p>
           </div>
           <div>
             <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Posting Time</p>
-            <p className="text-sm text-white font-medium">18:30</p>
+            <p className="text-sm text-white font-medium">{temporal.posting_hour !== undefined ? `${temporal.posting_hour}:00` : "18:30"}</p>
           </div>
           <div>
             <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Posting Day</p>
-            <p className="text-sm text-white font-medium">Monday</p>
+            <p className="text-sm text-white font-medium capitalize">{temporal.posting_day || "Monday"}</p>
           </div>
           <div className="col-span-2">
             <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Seasonality</p>
-            <p className="text-sm text-white font-medium">Ramadan / Eid Season</p>
+            <p className="text-sm text-white font-medium capitalize">{temporal.seasonality || "None"}</p>
           </div>
         </div>
       </div>
