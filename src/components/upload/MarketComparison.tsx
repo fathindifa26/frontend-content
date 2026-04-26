@@ -18,7 +18,7 @@ export function MarketComparison({ data }: MarketComparisonProps) {
     <div className="col-span-12 glass-panel p-8 rounded-[40px] space-y-8">
        <div className="flex items-center justify-between">
           <div>
-             <h3 className="text-lg font-bold text-white">Market Comparison</h3>
+             <h3 className="text-lg font-bold text-white">Market Comparison<span className="dummy-badge">Dummy</span></h3>
              <p className="text-sm text-on-surface-variant">Benchmarking video performance against global standards.</p>
           </div>
           <div className="flex p-1 bg-white/5 rounded-2xl border border-white/10">
@@ -40,7 +40,7 @@ export function MarketComparison({ data }: MarketComparisonProps) {
              <Sparkles size={24} />
           </div>
           <div className="space-y-2">
-             <p className="text-sm font-bold text-white uppercase tracking-widest">AI Recommendation</p>
+             <p className="text-sm font-bold text-white uppercase tracking-widest">AI Recommendation<span className="dummy-badge">Dummy</span></p>
              <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
                {positioning.scene_cut_estimate?.percentile < 50 
                  ? `To reach the top 10% in the 'Global Market', consider increasing scene cut frequency by 15% and using a higher-tempo background track.`

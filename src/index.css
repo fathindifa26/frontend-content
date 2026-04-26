@@ -41,6 +41,10 @@
   .glass-card {
     @apply bg-white/5 border border-white/5 rounded-[20px] transition-all duration-300;
   }
+
+  .dummy-badge {
+    @apply px-1.5 py-0.5 bg-secondary/20 text-secondary text-[8px] font-black uppercase tracking-tighter rounded border border-secondary/30 ml-1.5 inline-block align-middle;
+  }
 }
 
 /* Custom Scrollbar */

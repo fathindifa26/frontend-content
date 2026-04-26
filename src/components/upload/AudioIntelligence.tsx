@@ -17,7 +17,7 @@ export function AudioIntelligence({ data }: AudioIntelligenceProps) {
              <div className="p-1.5 bg-tertiary/20 rounded-lg">
                 <Volume2 size={16} className="text-tertiary" />
              </div>
-             <span className="text-sm font-bold text-white">Trending Audio</span>
+             <span className="text-sm font-bold text-white">Trending Audio<span className="dummy-badge">Dummy</span></span>
           </div>
           <span className="text-[10px] bg-tertiary text-white px-2.5 py-1 rounded-lg font-bold shadow-lg shadow-tertiary/20">Rank #4</span>
        </div>

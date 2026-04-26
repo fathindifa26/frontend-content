@@ -9,7 +9,7 @@ export function AccountContext({ data }: AccountContextProps) {
 
   return (
     <div className="col-span-12 lg:col-span-4 glass-panel p-6 rounded-[32px] space-y-6">
-       <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Account Context</h3>
+       <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Account Context<span className="dummy-badge">Dummy</span></h3>
        <div className="space-y-4">
           {[
             { icon: Users, label: "Followers", value: profile.followers?.toLocaleString() || "1.2M" },
@@ -26,7 +26,7 @@ export function AccountContext({ data }: AccountContextProps) {
           ))}
        </div>
        <div className="p-4 bg-success/10 rounded-2xl border border-success/20 flex flex-col space-y-1">
-          <p className="text-[10px] text-success font-bold uppercase tracking-widest">Growth Vector</p>
+          <p className="text-[10px] text-success font-bold uppercase tracking-widest">Growth Vector<span className="dummy-badge">Dummy</span></p>
           <div className="flex items-center text-success space-x-2">
              <TrendingUp size={16} />
              <span className="text-sm font-bold">+12% vs last 30 days</span>

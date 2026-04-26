@@ -33,15 +33,15 @@ export function MetadataCard({ data }: MetadataCardProps) {
             <p className="text-sm text-white font-medium">{semantic.format || "Instagram Reels"}</p>
           </div>
           <div>
-            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Duration</p>
+            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Duration<span className="dummy-badge">Dummy</span></p>
             <p className="text-sm text-white font-medium">{visual.duration_min ? `${visual.duration_min} min` : "00:42.15"}</p>
           </div>
           <div>
-            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Posting Time</p>
+            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Posting Time<span className="dummy-badge">Dummy</span></p>
             <p className="text-sm text-white font-medium">{temporal.posting_hour !== undefined ? `${temporal.posting_hour}:00` : "18:30"}</p>
           </div>
           <div>
-            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Posting Day</p>
+            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Posting Day<span className="dummy-badge">Dummy</span></p>
             <p className="text-sm text-white font-medium capitalize">{temporal.posting_day || "Monday"}</p>
           </div>
           <div>
@@ -49,7 +49,7 @@ export function MetadataCard({ data }: MetadataCardProps) {
             <p className="text-sm text-white font-medium capitalize">{semantic.language || "English"}</p>
           </div>
           <div className="col-span-2">
-            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Seasonality</p>
+            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Seasonality<span className="dummy-badge">Dummy</span></p>
             <p className="text-sm text-white font-medium capitalize">{temporal.seasonality || "None"}</p>
           </div>
         </div>
