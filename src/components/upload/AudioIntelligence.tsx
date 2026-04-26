@@ -16,7 +16,7 @@ export function AudioIntelligence() {
        </div>
        <div className="space-y-3">
           <div className="flex justify-between text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
-             <span>Speech Clarity</span>
+             <span>Speech Percentage</span>
              <span className="text-white">94%</span>
           </div>
           <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">

@@ -30,7 +30,7 @@ export function TimelineCard() {
          </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Faces Detected</p>
           <p className="text-3xl font-bold text-white">02</p>
@@ -40,8 +40,12 @@ export function TimelineCard() {
           <p className="text-3xl font-bold text-white">05</p>
         </div>
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-          <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Scene Intensity</p>
-          <p className="text-3xl font-bold text-success">High</p>
+          <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Editing Pace</p>
+          <p className="text-3xl font-bold text-white">12</p>
+        </div>
+        <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+          <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Face Emotions</p>
+          <p className="text-sm font-bold text-white mt-2">Smile, Surprised</p>
         </div>
       </div>
     </div>

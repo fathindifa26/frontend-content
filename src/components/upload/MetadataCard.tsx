@@ -28,6 +28,18 @@ export function MetadataCard() {
             <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Duration</p>
             <p className="text-sm text-white font-medium">00:42.15</p>
           </div>
+          <div>
+            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Posting Time</p>
+            <p className="text-sm text-white font-medium">18:30</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Posting Day</p>
+            <p className="text-sm text-white font-medium">Monday</p>
+          </div>
+          <div className="col-span-2">
+            <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Seasonality</p>
+            <p className="text-sm text-white font-medium">Ramadan / Eid Season</p>
+          </div>
         </div>
       </div>
       <div className="flex items-center space-x-2 text-success bg-success/10 px-3 py-2 rounded-xl border border-success/20">
