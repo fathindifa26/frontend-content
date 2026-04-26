@@ -22,7 +22,7 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
 
       <div className="grid grid-cols-12 gap-6">
         <MetadataCard data={analysis} />
-        <TimelineCard data={analysis.visual} />
+        <TimelineCard data={analysis.visual} market={market.positioning} />
         <AudioIntelligence data={analysis.audio} />
         <ContentStrategy data={analysis.semantic} />
         <AccountContext data={analysis.profile} />

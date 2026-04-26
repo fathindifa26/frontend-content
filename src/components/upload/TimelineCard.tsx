@@ -2,10 +2,12 @@ import { Video } from "lucide-react";
 
 interface TimelineCardProps {
   data?: any;
+  market?: any;
 }
 
-export function TimelineCard({ data }: TimelineCardProps) {
+export function TimelineCard({ data, market }: TimelineCardProps) {
   const visual = data || {};
+  const m = market || {};
 
   return (
     <div className="col-span-12 lg:col-span-9 glass-panel p-6 rounded-[32px] space-y-6">
@@ -39,19 +41,39 @@ export function TimelineCard({ data }: TimelineCardProps) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Faces Detected</p>
-          <p className="text-3xl font-bold text-white">{visual.face_present ?? "02"}</p>
+          <div className="flex items-baseline space-x-2">
+            <p className="text-3xl font-bold text-white">{visual.face_present ?? "02"}</p>
+            <p className="text-[10px] font-bold text-on-surface-variant bg-white/5 px-1.5 py-0.5 rounded">
+              {m.face_present && !isNaN(m.face_present.percentile) ? `Top ${Math.round(100 - m.face_present.percentile)}%` : "Top 12%"}
+            </p>
+          </div>
         </div>
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Text Overlays</p>
-          <p className="text-3xl font-bold text-white">{visual.text_overlay_count ?? "05"}</p>
+          <div className="flex items-baseline space-x-2">
+            <p className="text-3xl font-bold text-white">{visual.text_overlay_count ?? "05"}</p>
+            <p className="text-[10px] font-bold text-on-surface-variant bg-white/5 px-1.5 py-0.5 rounded">
+              {m.text_overlay_count && !isNaN(m.text_overlay_count.percentile) ? `Top ${Math.round(100 - m.text_overlay_count.percentile)}%` : "Top 8%"}
+            </p>
+          </div>
         </div>
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Editing Pace</p>
-          <p className="text-3xl font-bold text-white">{visual.scene_cut_estimate ?? "12"}</p>
+          <div className="flex items-baseline space-x-2">
+            <p className="text-3xl font-bold text-white">{visual.scene_cut_estimate ?? "12"}</p>
+            <p className="text-[10px] font-bold text-on-surface-variant bg-white/5 px-1.5 py-0.5 rounded">
+              {m.scene_cut_estimate && !isNaN(m.scene_cut_estimate.percentile) ? `Top ${Math.round(100 - m.scene_cut_estimate.percentile)}%` : "Top 15%"}
+            </p>
+          </div>
         </div>
         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Face Emotions</p>
-          <p className="text-sm font-bold text-white mt-2 capitalize">{visual.face_emotion || "Smile, Surprised"}</p>
+          <div className="flex items-baseline space-x-2">
+            <p className="text-sm font-bold text-white mt-1 capitalize">{visual.face_emotion || "Surprised"}</p>
+            <p className="text-[10px] font-bold text-on-surface-variant bg-white/5 px-1.5 py-0.5 rounded">
+              {m.face_emotion ? `${Math.round(m.face_emotion.proportion)}% market` : "18% market"}
+            </p>
+          </div>
         </div>
       </div>
     </div>
