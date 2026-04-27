@@ -82,12 +82,17 @@ export function TimelineCard({ data, market, benchmarkType = "frequency" }: Time
           <div className="flex items-baseline space-x-2">
             <p className="text-sm font-bold text-white mt-1 capitalize">{visual.face_emotion || "Surprised"}</p>
             <MetricBadge 
-              value={m.face_emotion?.proportion} 
-              avgValue={m.face_emotion?.avg_proportion}
+              value={m.face_emotion}
               type="categorical" 
               fallback={25} 
               benchmarkType={benchmarkType}
-              labelOverride={m.face_emotion ? `${Math.round(m.face_emotion.proportion)}% market` : "25% market"}
+              labelOverride={m.face_emotion ? (
+                benchmarkType === "frequency" 
+                  ? `${Math.round(m.face_emotion.frequency.proportion)}% market`
+                  : `${(m.face_emotion.views.avg_views / 1000).toFixed(1)}k views`
+              ) : (
+                benchmarkType === "frequency" ? "25% market" : "12k views"
+              )}
             />
           </div>
         </div>

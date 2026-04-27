@@ -1,7 +1,7 @@
 import React from "react";
 
 interface MetricBadgeProps {
-  value: number | undefined;
+  value: any;
   type: "numeric" | "categorical";
   avgValue?: number; // Used for categorical avg proportion
   fallback?: number;
@@ -13,25 +13,49 @@ export function MetricBadge({
   value, 
   type, 
   avgValue, 
-  fallback = 50, 
+  fallback = 0,
   labelOverride,
   benchmarkType = "frequency"
 }: MetricBadgeProps) {
   
-  const val = (value !== undefined && !isNaN(value)) ? value : fallback;
+  const val = type === "numeric" 
+    ? (typeof value === "number" && !isNaN(value) ? value : fallback)
+    : fallback;
 
   // Color Logic
   const getColorClasses = () => {
+    if (benchmarkType === "views") {
+      // Views Logic: Red (<30) - Blue (30-70) - Green (>70)
+      if (type === "numeric") {
+        if (val > 70) return "bg-success/20 text-success border-success/30 shadow-[0_0_10px_rgba(74,222,128,0.2)]";
+        if (val > 30) return "bg-primary/20 text-primary border-primary/30 shadow-[0_0_10px_rgba(79,70,229,0.2)]";
+        return "bg-error/20 text-error border-error/30 shadow-[0_0_10px_rgba(248,113,113,0.2)]";
+      } else {
+        // Categorical Views Logic: Comparison against Global Avg Views
+        const viewsData = typeof value === "object" ? value?.views : null;
+        const avg_views = viewsData?.avg_views ?? 0;
+        const global_avg = viewsData?.global_avg_views ?? 1;
+        
+        if (avg_views > global_avg * 1.2) return "bg-success/20 text-success border-success/30 shadow-[0_0_10px_rgba(74,222,128,0.2)]";
+        if (avg_views > global_avg * 0.8) return "bg-primary/20 text-primary border-primary/30 shadow-[0_0_10px_rgba(79,70,229,0.2)]";
+        return "bg-error/20 text-error border-error/30 shadow-[0_0_10px_rgba(248,113,113,0.2)]";
+      }
+    }
+
+    // Default / Frequency Logic (Reverted state)
     if (type === "numeric") {
-      // Numerical Logic: Red (Low) - Green (Median) - Blue (High)
+      // Numerical Frequency: Red (Low) - Green (Median) - Blue (High)
       if (val > 65) return "bg-primary/20 text-primary border-primary/30 shadow-[0_0_10px_rgba(79,70,229,0.2)]";
       if (val > 35) return "bg-success/20 text-success border-success/30 shadow-[0_0_10px_rgba(74,222,128,0.2)]";
       return "bg-error/20 text-error border-error/30 shadow-[0_0_10px_rgba(248,113,113,0.2)]";
     } else {
-      // Categorical Logic: Red (Rare) - Blue (Common) - Green (Popular)
-      const avg = avgValue ?? 15;
-      if (val > avg * 1.2) return "bg-success/20 text-success border-success/30 shadow-[0_0_10px_rgba(74,222,128,0.2)]";
-      if (val > avg * 0.8) return "bg-primary/20 text-primary border-primary/30 shadow-[0_0_10px_rgba(79,70,229,0.2)]";
+      // Categorical Frequency: Comparison against Avg Proportion
+      const freqData = typeof value === "object" ? value?.frequency : null;
+      const freq = freqData?.proportion ?? (typeof value === "number" ? value : 0);
+      const avg = freqData?.avg_proportion ?? avgValue ?? 15;
+      
+      if (freq > avg * 1.2) return "bg-success/20 text-success border-success/30 shadow-[0_0_10px_rgba(74,222,128,0.2)]";
+      if (freq > avg * 0.8) return "bg-primary/20 text-primary border-primary/30 shadow-[0_0_10px_rgba(79,70,229,0.2)]";
       return "bg-error/20 text-error border-error/30 shadow-[0_0_10px_rgba(248,113,113,0.2)]";
     }
   };
@@ -48,7 +72,9 @@ export function MetricBadge({
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-            <p className="text-[8px] text-on-surface-variant">Blue: Above {benchmarkType === "frequency" ? "Median" : "Average"}</p>
+            <p className="text-[8px] text-on-surface-variant">
+              Blue: {benchmarkType === "frequency" ? "Above Median" : "Within Average"}
+            </p>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-1.5 h-1.5 rounded-full bg-error" />
