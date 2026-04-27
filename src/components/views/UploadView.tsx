@@ -121,6 +121,34 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
         <AccountContext data={analysis.profile} />
         <MarketComparison data={market} />
       </div>
+
+      {/* AI Analysis Section */}
+      <div className="space-y-4">
+        {/* Current Condition Card */}
+        <div className="w-full">
+          <div className="glass-panel p-6 rounded-[32px] space-y-3 bg-amber-400/5 border-amber-400/20 shadow-[0_0_20px_rgba(251,191,36,0.1)]">
+            <div className="flex items-center space-x-2">
+              <h3 className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Current Condition</h3>
+            </div>
+            <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
+              Your video has a strong visual hook but lacks consistent word density in the middle section. The audio sentiment is energetic, which aligns well with the top 10% of performing videos in your category.
+            </p>
+          </div>
+        </div>
+
+        {/* Recommendation Card */}
+        <div className="w-full">
+          <div className="glass-panel p-6 rounded-[32px] space-y-3 bg-success/5 border-success/20 shadow-[0_0_20px_rgba(74,222,128,0.1)]">
+            <div className="flex items-center space-x-2">
+              <h3 className="text-[10px] font-bold text-success uppercase tracking-widest">Recommendation</h3>
+            </div>
+            <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
+              Consider increasing the scene cut frequency during the transition phase to maintain viewer retention. Adding a more prominent call-to-action within the first 15 seconds could improve your overall engagement rate by up to 12%.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
+
