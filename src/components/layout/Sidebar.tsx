@@ -37,7 +37,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         <div className="p-2 bg-primary/20 rounded-xl border border-white/10 shadow-lg">
           <Video className="text-white" size={20} />
         </div>
-        <span className="text-xl font-bold tracking-tight text-white uppercase italic">Lumina</span>
+        <span className="text-xl font-bold tracking-tight text-white lowercase italic">viralyn.ai</span>
       </div>
 
       <div className="px-6 mt-4">
