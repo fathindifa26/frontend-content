@@ -55,6 +55,30 @@ export default function App() {
     }
   };
 
+  const handleRegenerate = async () => {
+    if (!analysisResult) return null;
+    
+    try {
+      const response = await fetch("http://localhost:8000/regenerate-summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          analysis: analysisResult.analysis,
+          market_comparison: analysisResult.market_comparison
+        }),
+      });
+
+      if (!response.ok) throw new Error("Regeneration failed");
+
+      const data = await response.json();
+      return data.ai_summary;
+    } catch (error) {
+      console.error("Regeneration error:", error);
+      alert("Failed to regenerate summary.");
+      return null;
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-transparent selection:bg-primary/30">
       <div className="mesh-bg" />
@@ -69,10 +93,10 @@ export default function App() {
             <UploadView 
               onUpload={handleUpload} 
               onUrlSubmit={handleUrlSubmit}
+              onRegenerate={handleRegenerate}
               isAnalyzing={isAnalyzing} 
               data={analysisResult} 
             />
-
           ) : (
             <DashboardView />
           )}
