@@ -22,6 +22,8 @@ export function UploadHeader({ onUpload, onUrlSubmit, isAnalyzing }: UploadHeade
   const handleUrlSubmit = () => {
     if (url.trim()) {
       onUrlSubmit(url);
+      setShowUrlInput(false);
+      setUrl("");
     }
   };
 
