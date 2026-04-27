@@ -23,24 +23,27 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
       <UploadHeader onUpload={onUpload} isAnalyzing={isAnalyzing} />
       
       {/* Benchmark Type Toggle */}
-      <div className="flex justify-center">
-        <div className="glass-panel p-1.5 rounded-2xl border-white/10 flex items-center bg-white/2">
+      <div className="flex justify-center relative">
+        <div className="glass-panel p-1 rounded-2xl border-white/10 flex items-center bg-white/5 relative overflow-hidden backdrop-blur-2xl">
+          {/* Sliding Active Background */}
+          <div 
+            className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white/15 backdrop-blur-md rounded-xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all duration-300 ease-out z-0 ${
+              benchmarkType === "frequency" ? "left-1" : "left-[calc(50%+1px)]"
+            }`}
+          />
+          
           <button 
             onClick={() => setBenchmarkType("frequency")}
-            className={`px-6 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
-              benchmarkType === "frequency" 
-                ? "bg-white/10 text-white shadow-lg shadow-black/20 border border-white/5" 
-                : "text-on-surface-variant hover:text-white"
+            className={`relative z-10 px-8 py-2.5 text-xs font-bold transition-all duration-300 ${
+              benchmarkType === "frequency" ? "text-white" : "text-white/40 hover:text-white/70"
             }`}
           >
             Frequency
           </button>
           <button 
             onClick={() => setBenchmarkType("views")}
-            className={`px-6 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
-              benchmarkType === "views" 
-                ? "bg-white/10 text-white shadow-lg shadow-black/20 border border-white/5" 
-                : "text-on-surface-variant hover:text-white"
+            className={`relative z-10 px-8 py-2.5 text-xs font-bold transition-all duration-300 ${
+              benchmarkType === "views" ? "text-white" : "text-white/40 hover:text-white/70"
             }`}
           >
             Views
