@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { MetricBadge } from "../common/MetricBadge";
 
 interface ContentStrategyProps {
   data?: any;
+  market?: any;
+  benchmarkType?: "frequency" | "views";
 }
 
-export function ContentStrategy({ data }: ContentStrategyProps) {
+export function ContentStrategy({ data, market, benchmarkType = "frequency" }: ContentStrategyProps) {
   const semantic = data || {};
+  const m = market || {};
   const [msgLang, setMsgLang] = useState<"en" | "id">("en");
 
   // Handle both string (old) and object (new) content_message formats
@@ -20,27 +24,63 @@ export function ContentStrategy({ data }: ContentStrategyProps) {
   };
 
   return (
-    <div className="col-span-12 lg:col-span-4 glass-panel p-6 rounded-[32px] space-y-6">
+    <div className="col-span-12 lg:col-span-6 glass-panel p-6 rounded-[32px] space-y-6">
        <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Content Strategy</h3>
        <div className="grid grid-cols-3 gap-4">
           <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
              <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Topic</p>
-             <p className="text-sm text-white font-bold capitalize">{semantic.topic || "Tech Review"}</p>
+             <div className="flex flex-col space-y-2">
+                <p className="text-sm text-white font-bold capitalize truncate">{semantic.topic || "Tech Review"}</p>
+                <MetricBadge 
+                  value={m.categorical?.topic} 
+                  type="categorical" 
+                  benchmarkType={benchmarkType}
+                  labelOverride={m.categorical?.topic ? (
+                    benchmarkType === "frequency" 
+                      ? `${Math.round(m.categorical.topic.frequency.proportion)}% market`
+                      : `${(m.categorical.topic.views.avg_views / 1000).toFixed(1)}k views`
+                  ) : undefined}
+                />
+             </div>
           </div>
           <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
              <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Format</p>
-             <p className="text-sm text-white font-bold capitalize">{semantic.format || "Tutorial"}</p>
+             <div className="flex flex-col space-y-2">
+                <p className="text-sm text-white font-bold capitalize truncate">{semantic.format || "Tutorial"}</p>
+                <MetricBadge 
+                  value={m.categorical?.format} 
+                  type="categorical" 
+                  benchmarkType={benchmarkType}
+                  labelOverride={m.categorical?.format ? (
+                    benchmarkType === "frequency" 
+                      ? `${Math.round(m.categorical.format.frequency.proportion)}% market`
+                      : `${(m.categorical.format.views.avg_views / 1000).toFixed(1)}k views`
+                  ) : undefined}
+                />
+             </div>
           </div>
           <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
              <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Tone</p>
-             <p className="text-sm text-white font-bold capitalize">{semantic.tone || "Educational"}</p>
+             <div className="flex flex-col space-y-2">
+                <p className="text-sm text-white font-bold capitalize truncate">{semantic.tone || "Educational"}</p>
+                <MetricBadge 
+                  value={m.categorical?.tone} 
+                  type="categorical" 
+                  benchmarkType={benchmarkType}
+                  labelOverride={m.categorical?.tone ? (
+                    benchmarkType === "frequency" 
+                      ? `${Math.round(m.categorical.tone.frequency.proportion)}% market`
+                      : `${(m.categorical.tone.views.avg_views / 1000).toFixed(1)}k views`
+                  ) : undefined}
+                />
+             </div>
           </div>
        </div>
        <div className="space-y-4">
           <div className="p-5 bg-primary/10 rounded-2xl border border-primary/20 space-y-2">
              <p className="text-[10px] text-primary font-bold uppercase tracking-widest">Hook Message</p>
              <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
-               {semantic.hook_message ? `"${semantic.hook_message}"` : '"Wait until you see how this changes everything..."'}
+                {semantic.hook_message ? `"${semantic.hook_message}"` : '"Wait until you see how this changes everything..."'}
              </p>
           </div>
           <div className="p-5 bg-white/5 rounded-2xl border border-white/10 space-y-3">
@@ -62,26 +102,52 @@ export function ContentStrategy({ data }: ContentStrategyProps) {
                 </div>
              </div>
              <p className="text-sm text-on-surface/80 leading-relaxed min-h-[60px]">
-               {getContentMessage()}
+                {getContentMessage()}
              </p>
           </div>
        </div>
        <div className="space-y-4 px-2">
           <div className="flex items-center justify-between">
-             <p className="text-[10px] text-on-surface-variant uppercase font-bold">Word Density</p>
-             <p className="text-sm text-white font-bold tabular-nums">
-               {semantic.word_density_wps ? `${semantic.word_density_wps} w/s` : "3.2 w/s"}
-             </p>
+             <p className="text-sm font-bold text-white tracking-tight">Word Density</p>
+             <div className="flex items-center space-x-3">
+                <MetricBadge 
+                   value={m.numeric?.word_density_wps?.percentile} 
+                   type="numeric" 
+                   benchmarkType={benchmarkType}
+                />
+                <p className="text-base font-bold text-white tabular-nums">
+                   {semantic.word_density_wps ? `${semantic.word_density_wps} w/s` : "3.2 w/s"}
+                </p>
+             </div>
           </div>
           <div className="flex items-center justify-between">
-             <p className="text-[10px] text-on-surface-variant uppercase font-bold">Hook Type</p>
-             <p className="text-sm text-white font-bold capitalize">{semantic.hook_type || "Shocking Statement"}</p>
+             <p className="text-sm font-bold text-white tracking-tight">Hook Type</p>
+             <div className="flex items-center space-x-3">
+                <MetricBadge 
+                   value={m.categorical?.hook_type} 
+                   type="categorical" 
+                   benchmarkType={benchmarkType}
+                   labelOverride={m.categorical?.hook_type ? (
+                      benchmarkType === "frequency" 
+                        ? `${Math.round(m.categorical.hook_type.frequency.proportion)}% market`
+                        : `${(m.categorical.hook_type.views.avg_views / 1000).toFixed(1)}k views`
+                   ) : undefined}
+                />
+                <p className="text-sm font-bold text-white capitalize truncate max-w-[150px]">{semantic.hook_type || "Shocking Statement"}</p>
+             </div>
           </div>
           <div className="flex items-center justify-between">
-             <p className="text-[10px] text-on-surface-variant uppercase font-bold">Hook Duration</p>
-             <p className="text-sm text-white font-bold tabular-nums">
-               {semantic.hook_duration_sec ? `${semantic.hook_duration_sec}s` : "5s"}
-             </p>
+             <p className="text-sm font-bold text-white tracking-tight">Hook Duration</p>
+             <div className="flex items-center space-x-3">
+                <MetricBadge 
+                   value={m.numeric?.hook_duration_sec?.percentile} 
+                   type="numeric" 
+                   benchmarkType={benchmarkType}
+                />
+                <p className="text-base font-bold text-white tabular-nums">
+                   {semantic.hook_duration_sec ? `${semantic.hook_duration_sec}s` : "5s"}
+                </p>
+             </div>
           </div>
        </div>
     </div>

@@ -10,7 +10,7 @@ export function AudioIntelligence({ data }: AudioIntelligenceProps) {
   const speechPercent = audio.speech_ratio !== undefined ? Math.round(audio.speech_ratio * 100) : 94;
 
   return (
-    <div className="col-span-12 lg:col-span-4 glass-panel p-6 rounded-[32px] space-y-6">
+    <div className="col-span-12 lg:col-span-3 glass-panel p-6 rounded-[32px] space-y-6">
        <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Audio Intelligence</h3>
        <div className="p-4 bg-tertiary/20 rounded-2xl border border-tertiary/30 flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -19,7 +19,7 @@ export function AudioIntelligence({ data }: AudioIntelligenceProps) {
              </div>
              <span className="text-sm font-bold text-white">Trending Audio<span className="dummy-badge">Dummy</span></span>
           </div>
-          <span className="text-[10px] bg-tertiary text-white px-2.5 py-1 rounded-lg font-bold shadow-lg shadow-tertiary/20">Rank #4</span>
+          <span className="text-[8px] bg-tertiary/80 text-white px-1.5 py-0.5 rounded-md font-black tracking-tight shadow-sm shadow-tertiary/10 border border-white/10 uppercase">Rank #4</span>
        </div>
        <div className="space-y-3">
           <div className="flex justify-between text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">

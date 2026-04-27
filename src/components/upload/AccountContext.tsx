@@ -8,7 +8,7 @@ export function AccountContext({ data }: AccountContextProps) {
   const profile = data || {};
 
   return (
-    <div className="col-span-12 lg:col-span-4 glass-panel p-6 rounded-[32px] space-y-6">
+    <div className="col-span-12 lg:col-span-3 glass-panel p-6 rounded-[32px] space-y-6">
        <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Account Context<span className="dummy-badge">Dummy</span></h3>
        <div className="space-y-4">
           {[
