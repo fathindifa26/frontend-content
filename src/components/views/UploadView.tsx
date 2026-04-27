@@ -18,10 +18,24 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
   const [benchmarkType, setBenchmarkType] = useState<"frequency" | "views">("frequency");
   const analysis = data?.analysis || {};
   const market = data?.market_comparison || {};
-  const aiSummary = data?.ai_summary || {
-    current_condition: "Analyzing your content relative to the market...",
-    recommendation: "Fetching specific growth recommendations..."
-  };
+  
+  const defaultPoints = Array(3).fill({ 
+    title: "ANALYZING...", 
+    description: "Our AI is processing your content relative to current market trends..." 
+  });
+
+  // Handle cases where ai_summary might be a string (old version) or missing
+  let aiSummary = data?.ai_summary;
+  if (!aiSummary || typeof aiSummary === "string") {
+    aiSummary = {
+      current_condition: defaultPoints,
+      recommendation: defaultPoints
+    };
+  }
+
+  // Double check that current_condition and recommendation are actually arrays
+  const currentCondition = Array.isArray(aiSummary.current_condition) ? aiSummary.current_condition : defaultPoints;
+  const recommendation = Array.isArray(aiSummary.recommendation) ? aiSummary.recommendation : defaultPoints;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -127,33 +141,57 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
       </div>
 
       {/* AI Analysis Section */}
-      <div className="space-y-4">
-        {/* Current Condition Card */}
-        <div className="w-full">
-          <div className="glass-panel p-6 rounded-[32px] space-y-3 bg-amber-400/5 border-amber-400/20 shadow-[0_0_20px_rgba(251,191,36,0.1)]">
-            <div className="flex items-center space-x-2">
-              <h3 className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Current Condition</h3>
-            </div>
-            <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
-              {aiSummary.current_condition}
-            </p>
+      <div className="space-y-8">
+        {/* Current Condition Section */}
+        <div className="glass-panel p-8 rounded-[40px] space-y-8 bg-white/[0.02] border-white/10 shadow-2xl relative overflow-hidden group">
+          {/* Subtle background glow */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-amber-400/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-amber-400/20 transition-all duration-700" />
+          
+          <div className="px-2">
+            <h3 className="text-lg font-bold text-white">Current Condition</h3>
+            <p className="text-sm text-on-surface-variant mt-1">Deep analysis of your video's current alignment with market performance data</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+            {currentCondition.map((item: any, idx: number) => (
+              <div key={idx} className="glass-panel p-6 rounded-[28px] space-y-3 bg-amber-400/5 border-amber-400/20 shadow-[0_0_20px_rgba(251,191,36,0.05)] hover:bg-amber-400/10 hover:border-amber-400/40 transition-all duration-500 group/card">
+                <h4 className="text-[10px] font-bold text-amber-400 uppercase tracking-widest group-hover/card:scale-105 transition-transform origin-left">{item.title}</h4>
+                <p className="text-sm text-on-surface/80 leading-relaxed font-medium line-clamp-4 group-hover/card:text-white transition-colors">
+                  {item.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Recommendation Card */}
-        <div className="w-full">
-          <div className="glass-panel p-6 rounded-[32px] space-y-3 bg-success/5 border-success/20 shadow-[0_0_20px_rgba(74,222,128,0.1)]">
-            <div className="flex items-center space-x-2">
-              <h3 className="text-[10px] font-bold text-success uppercase tracking-widest">Recommendation</h3>
-            </div>
-            <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
-              {aiSummary.recommendation}
-            </p>
+        {/* Recommendation Section */}
+        <div className="glass-panel p-8 rounded-[40px] space-y-8 bg-white/[0.02] border-white/10 shadow-2xl relative overflow-hidden group">
+          {/* Subtle background glow */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-success/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-success/20 transition-all duration-700" />
+
+          <div className="px-2">
+            <h3 className="text-lg font-bold text-white">Strategic Recommendation</h3>
+            <p className="text-sm text-on-surface-variant mt-1">Actionable steps to optimize your content for maximum reach and engagement</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+            {recommendation.map((item: any, idx: number) => (
+              <div key={idx} className="glass-panel p-6 rounded-[28px] space-y-3 bg-success/5 border-success/20 shadow-[0_0_20px_rgba(74,222,128,0.05)] hover:bg-success/10 hover:border-success/40 transition-all duration-500 group/card">
+                <h4 className="text-[10px] font-bold text-success uppercase tracking-widest group-hover/card:scale-105 transition-transform origin-left">{item.title}</h4>
+                <p className="text-sm text-on-surface/80 leading-relaxed font-medium line-clamp-4 group-hover/card:text-white transition-colors">
+                  {item.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+
     </div>
   );
 }
+
+
 
 
