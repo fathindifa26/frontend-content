@@ -25,7 +25,11 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
       
       {/* Benchmark Configuration Card */}
       <div className="w-full">
-        <div className="glass-panel p-6 rounded-[32px] border-white/10 space-y-4">
+        <div className={`glass-panel p-6 rounded-[32px] space-y-4 transition-all duration-500 ease-in-out ${
+          benchmarkType === "frequency" 
+            ? "bg-primary/5 border-primary/20 shadow-[0_0_20px_rgba(79,70,229,0.1)]" 
+            : "bg-amber-400/5 border-amber-400/20 shadow-[0_0_20px_rgba(251,191,36,0.1)]"
+        }`}>
           <div className="flex items-center space-x-2">
             <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Set Benchmark Configuration</h3>
             <div className="group relative">
@@ -45,13 +49,15 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
             {/* Freq/Views Toggle */}
             <div className="p-1 bg-white/5 rounded-xl border border-white/10 flex items-center relative overflow-hidden">
               <div 
-                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white/10 rounded-lg transition-all duration-300 ease-out z-0 ${
-                  benchmarkType === "frequency" ? "left-1" : "left-[calc(50%+1px)]"
+                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg transition-all duration-500 ease-out z-0 ${
+                  benchmarkType === "frequency" 
+                    ? "left-1 bg-primary/20" 
+                    : "left-[calc(50%+1px)] bg-amber-400/20"
                 }`}
               />
               <button 
                 onClick={() => setBenchmarkType("frequency")}
-                className={`relative z-10 px-4 py-1.5 text-[10px] font-bold transition-all ${
+                className={`relative z-10 px-4 py-1.5 text-[10px] font-bold transition-all duration-500 ${
                   benchmarkType === "frequency" ? "text-white" : "text-white/30 hover:text-white/50"
                 }`}
               >
@@ -59,8 +65,8 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
               </button>
               <button 
                 onClick={() => setBenchmarkType("views")}
-                className={`relative z-10 px-4 py-1.5 text-[10px] font-bold transition-all ${
-                  benchmarkType === "views" ? "text-white" : "text-white/30 hover:text-white/50"
+                className={`relative z-10 px-4 py-1.5 text-[10px] font-bold transition-all duration-500 ${
+                  benchmarkType === "views" ? "text-amber-400" : "text-white/30 hover:text-white/50"
                 }`}
               >
                 Views
