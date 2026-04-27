@@ -18,6 +18,10 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
   const [benchmarkType, setBenchmarkType] = useState<"frequency" | "views">("frequency");
   const analysis = data?.analysis || {};
   const market = data?.market_comparison || {};
+  const aiSummary = data?.ai_summary || {
+    current_condition: "Analyzing your content relative to the market...",
+    recommendation: "Fetching specific growth recommendations..."
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -131,7 +135,7 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
               <h3 className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Current Condition</h3>
             </div>
             <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
-              Your video has a strong visual hook but lacks consistent word density in the middle section. The audio sentiment is energetic, which aligns well with the top 10% of performing videos in your category.
+              {aiSummary.current_condition}
             </p>
           </div>
         </div>
@@ -143,7 +147,7 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
               <h3 className="text-[10px] font-bold text-success uppercase tracking-widest">Recommendation</h3>
             </div>
             <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
-              Consider increasing the scene cut frequency during the transition phase to maintain viewer retention. Adding a more prominent call-to-action within the first 15 seconds could improve your overall engagement rate by up to 12%.
+              {aiSummary.recommendation}
             </p>
           </div>
         </div>
@@ -151,4 +155,5 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
     </div>
   );
 }
+
 
