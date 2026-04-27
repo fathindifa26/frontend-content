@@ -1,5 +1,4 @@
 import { UploadHeader } from "../upload/UploadHeader";
-import { ExplanationCard } from "../upload/ExplanationCard";
 import { MetadataCard } from "../upload/MetadataCard";
 import { TimelineCard } from "../upload/TimelineCard";
 import { AudioIntelligence } from "../upload/AudioIntelligence";
@@ -20,8 +19,6 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <UploadHeader onUpload={onUpload} isAnalyzing={isAnalyzing} />
-      
-      <ExplanationCard />
 
       <div className="grid grid-cols-12 gap-6">
         <MetadataCard data={analysis} />

@@ -9,21 +9,24 @@ export function TimelineCard({ data, market }: TimelineCardProps) {
   const visual = data || {};
   const m = market || {};
 
-  const getPercentileColor = (percentile: number | undefined) => {
-    // Default to average (Green) if data is missing for the "DUMMY" state
-    const p = percentile !== undefined && !isNaN(percentile) ? percentile : 60;
+  const getNumericColor = (percentile: number | undefined, fallback: number = 50) => {
+    const p = (percentile !== undefined && !isNaN(percentile)) ? percentile : fallback; 
     
-    if (p >= 80) return "bg-indigo-500/20 text-indigo-400 border-indigo-500/30 shadow-[0_0_10px_rgba(99,102,241,0.2)]";
-    if (p >= 40) return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]";
-    return "bg-rose-500/20 text-rose-400 border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.2)]";
+    if (p > 65) return "bg-primary/20 text-primary border-primary/30 shadow-[0_0_10px_rgba(79,70,229,0.2)]"; // Blue (Above Median)
+    if (p > 35) return "bg-success/20 text-success border-success/30 shadow-[0_0_10px_rgba(74,222,128,0.2)]"; // Green (Near Median)
+    return "bg-error/20 text-error border-error/30 shadow-[0_0_10px_rgba(248,113,113,0.2)]"; // Red (Below Median)
   };
 
-  const getProportionColor = (proportion: number | undefined) => {
-    const p = proportion !== undefined && !isNaN(proportion) ? proportion : 15;
+  const getCategoricalColor = (proportion: number | undefined, avgProportion: number | undefined, fallback: number = 15) => {
+    const p = (proportion !== undefined && !isNaN(proportion)) ? proportion : fallback;
+    const avg = (avgProportion !== undefined && !isNaN(avgProportion)) ? avgProportion : 15;
     
-    if (p >= 25) return "bg-indigo-500/20 text-indigo-400 border-indigo-500/30";
-    if (p >= 10) return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
-    return "bg-rose-500/20 text-rose-400 border-rose-500/30";
+    // Green if significantly above average (> 120% of avg)
+    if (p > avg * 1.2) return "bg-success/20 text-success border-success/30 shadow-[0_0_10px_rgba(74,222,128,0.2)]";
+    // Blue if near average (80% - 120% of avg)
+    if (p > avg * 0.8) return "bg-primary/20 text-primary border-primary/30 shadow-[0_0_10px_rgba(79,70,229,0.2)]";
+    // Red if significantly below average (< 80% of avg)
+    return "bg-error/20 text-error border-error/30 shadow-[0_0_10px_rgba(248,113,113,0.2)]";
   };
 
   return (
@@ -60,8 +63,8 @@ export function TimelineCard({ data, market }: TimelineCardProps) {
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Faces Detected</p>
           <div className="flex items-baseline space-x-2">
             <p className="text-3xl font-bold text-white">{visual.face_present ?? "02"}</p>
-            <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors ${getPercentileColor(m.face_present?.percentile ?? 88)}`}>
-              {m.face_present && !isNaN(m.face_present.percentile) ? `Top ${Math.round(100 - m.face_present.percentile)}%` : "Top 12%"}
+            <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors ${getNumericColor(m.face_present?.percentile, 88)}`}>
+              {m.face_present && !isNaN(m.face_present.percentile) ? `${Math.round(m.face_present.percentile)}th Pctl` : "88th Pctl"}
             </p>
           </div>
         </div>
@@ -69,8 +72,8 @@ export function TimelineCard({ data, market }: TimelineCardProps) {
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Text Overlays</p>
           <div className="flex items-baseline space-x-2">
             <p className="text-3xl font-bold text-white">{visual.text_overlay_count ?? "05"}</p>
-            <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors ${getPercentileColor(m.text_overlay_count?.percentile ?? 92)}`}>
-              {m.text_overlay_count && !isNaN(m.text_overlay_count.percentile) ? `Top ${Math.round(100 - m.text_overlay_count.percentile)}%` : "Top 8%"}
+            <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors ${getNumericColor(m.text_overlay_count?.percentile, 92)}`}>
+              {m.text_overlay_count && !isNaN(m.text_overlay_count.percentile) ? `${Math.round(m.text_overlay_count.percentile)}th Pctl` : "92th Pctl"}
             </p>
           </div>
         </div>
@@ -78,8 +81,8 @@ export function TimelineCard({ data, market }: TimelineCardProps) {
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Editing Pace</p>
           <div className="flex items-baseline space-x-2">
             <p className="text-3xl font-bold text-white">{visual.scene_cut_estimate ?? "12"}</p>
-            <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors ${getPercentileColor(m.scene_cut_estimate?.percentile ?? 85)}`}>
-              {m.scene_cut_estimate && !isNaN(m.scene_cut_estimate.percentile) ? `Top ${Math.round(100 - m.scene_cut_estimate.percentile)}%` : "Top 15%"}
+            <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors ${getNumericColor(m.scene_cut_estimate?.percentile, 85)}`}>
+              {m.scene_cut_estimate && !isNaN(m.scene_cut_estimate.percentile) ? `${Math.round(m.scene_cut_estimate.percentile)}th Pctl` : "85th Pctl"}
             </p>
           </div>
         </div>
@@ -87,7 +90,7 @@ export function TimelineCard({ data, market }: TimelineCardProps) {
           <p className="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Face Emotions</p>
           <div className="flex items-baseline space-x-2">
             <p className="text-sm font-bold text-white mt-1 capitalize">{visual.face_emotion || "Surprised"}</p>
-            <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors ${getProportionColor(m.face_emotion?.proportion ?? 18)}`}>
+            <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded border transition-colors ${getCategoricalColor(m.face_emotion?.proportion, m.face_emotion?.avg_proportion, 18)}`}>
               {m.face_emotion ? `${Math.round(m.face_emotion.proportion)}% market` : "18% market"}
             </p>
           </div>
