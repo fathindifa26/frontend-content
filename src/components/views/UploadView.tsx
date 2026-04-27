@@ -10,11 +10,14 @@ import { MarketComparison } from "../upload/MarketComparison";
 
 interface UploadViewProps {
   onUpload: (file: File) => void;
+  onUrlSubmit: (url: string) => void;
   isAnalyzing: boolean;
   data: any;
 }
 
-export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
+
+export function UploadView({ onUpload, onUrlSubmit, isAnalyzing, data }: UploadViewProps) {
+
   const [benchmarkType, setBenchmarkType] = useState<"frequency" | "views">("frequency");
   const analysis = data?.analysis || {};
   const market = data?.market_comparison || {};
@@ -39,7 +42,12 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <UploadHeader onUpload={onUpload} isAnalyzing={isAnalyzing} />
+      <UploadHeader 
+        onUpload={onUpload} 
+        onUrlSubmit={onUrlSubmit}
+        isAnalyzing={isAnalyzing} 
+      />
+
       
       {/* Benchmark Configuration Card */}
       <div className="w-full">

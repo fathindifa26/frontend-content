@@ -34,6 +34,27 @@ export default function App() {
     }
   };
 
+  const handleUrlSubmit = async (url: string) => {
+    setIsAnalyzing(true);
+    setAnalysisResult(null);
+
+    try {
+      const response = await fetch(`http://localhost:8000/analyze-url?url=${encodeURIComponent(url)}`, {
+        method: "POST",
+      });
+
+      if (!response.ok) throw new Error("URL analysis failed");
+
+      const data = await response.json();
+      setAnalysisResult(data);
+    } catch (error) {
+      console.error("URL analysis error:", error);
+      alert("Failed to download or analyze video. Please check the URL and try again.");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-transparent selection:bg-primary/30">
       <div className="mesh-bg" />
@@ -47,9 +68,11 @@ export default function App() {
           {activeTab === "upload" ? (
             <UploadView 
               onUpload={handleUpload} 
+              onUrlSubmit={handleUrlSubmit}
               isAnalyzing={isAnalyzing} 
               data={analysisResult} 
             />
+
           ) : (
             <DashboardView />
           )}

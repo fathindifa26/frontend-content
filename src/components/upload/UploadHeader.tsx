@@ -1,18 +1,27 @@
-import { CloudUpload, Upload, Link as LinkIcon, Loader2 } from "lucide-react";
-import React, { useRef, ChangeEvent } from "react";
+import { CloudUpload, Upload, Link as LinkIcon, Loader2, ArrowLeft, Send } from "lucide-react";
+import React, { useRef, useState } from "react";
 
 interface UploadHeaderProps {
   onUpload: (file: File) => void;
+  onUrlSubmit: (url: string) => void;
   isAnalyzing: boolean;
 }
 
-export function UploadHeader({ onUpload, isAnalyzing }: UploadHeaderProps) {
+export function UploadHeader({ onUpload, onUrlSubmit, isAnalyzing }: UploadHeaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [url, setUrl] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       onUpload(file);
+    }
+  };
+
+  const handleUrlSubmit = () => {
+    if (url.trim()) {
+      onUrlSubmit(url);
     }
   };
 
@@ -35,6 +44,44 @@ export function UploadHeader({ onUpload, isAnalyzing }: UploadHeaderProps) {
             <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.3em]">
               AI Analysis
             </p>
+          </div>
+        </div>
+      ) : showUrlInput ? (
+        <div className="animate-in slide-in-from-right-4 fade-in duration-500 flex flex-col items-center space-y-6 w-full max-w-md">
+          <button 
+            onClick={() => setShowUrlInput(false)}
+            className="absolute top-8 left-8 p-2 text-white/30 hover:text-white transition-colors"
+          >
+            <ArrowLeft size={20} />
+          </button>
+
+          <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5">
+            <LinkIcon className="text-primary" size={20} />
+          </div>
+
+          <div className="space-y-1">
+            <h2 className="text-xl font-bold text-white tracking-tight">Analysis via URL</h2>
+            <p className="text-[11px] text-white/40 font-medium">Paste Instagram Reels or TikTok video link below</p>
+          </div>
+
+          <div className="w-full flex flex-col space-y-3">
+            <div className="relative">
+              <input 
+                type="text"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://www.instagram.com/reels/..."
+                className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-[13px] text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
+              />
+            </div>
+            <button
+              onClick={handleUrlSubmit}
+              disabled={!url.trim()}
+              className="w-full py-3 bg-primary text-white text-[11px] font-bold rounded-xl hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-primary/20 flex items-center justify-center space-x-2"
+            >
+              <Send size={14} />
+              <span>Analyze Video</span>
+            </button>
           </div>
         </div>
       ) : (
@@ -64,6 +111,7 @@ export function UploadHeader({ onUpload, isAnalyzing }: UploadHeaderProps) {
               <span>Upload File</span>
             </button>
             <button
+              onClick={() => setShowUrlInput(true)}
               className="px-6 py-2.5 bg-white/5 text-white/60 text-[11px] font-bold rounded-xl border border-white/5 hover:bg-white/10 hover:text-white transition-all flex items-center space-x-2"
             >
               <LinkIcon size={14} />
@@ -75,3 +123,4 @@ export function UploadHeader({ onUpload, isAnalyzing }: UploadHeaderProps) {
     </div>
   );
 }
+
