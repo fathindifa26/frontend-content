@@ -55,7 +55,7 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
                   benchmarkType === "frequency" ? "text-white" : "text-white/30 hover:text-white/50"
                 }`}
               >
-                Frequency
+                Freq
               </button>
               <button 
                 onClick={() => setBenchmarkType("views")}
