@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { UploadHeader } from "../upload/UploadHeader";
 import { MetadataCard } from "../upload/MetadataCard";
 import { TimelineCard } from "../upload/TimelineCard";
@@ -13,16 +14,47 @@ interface UploadViewProps {
 }
 
 export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
+  const [benchmarkType, setBenchmarkType] = useState<"frequency" | "views">("frequency");
   const analysis = data?.analysis || {};
   const market = data?.market_comparison || {};
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <UploadHeader onUpload={onUpload} isAnalyzing={isAnalyzing} />
+      
+      {/* Benchmark Type Toggle */}
+      <div className="flex justify-center">
+        <div className="glass-panel p-1.5 rounded-2xl border-white/10 flex items-center bg-white/2">
+          <button 
+            onClick={() => setBenchmarkType("frequency")}
+            className={`px-6 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
+              benchmarkType === "frequency" 
+                ? "bg-white/10 text-white shadow-lg shadow-black/20 border border-white/5" 
+                : "text-on-surface-variant hover:text-white"
+            }`}
+          >
+            Frequency
+          </button>
+          <button 
+            onClick={() => setBenchmarkType("views")}
+            className={`px-6 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
+              benchmarkType === "views" 
+                ? "bg-white/10 text-white shadow-lg shadow-black/20 border border-white/5" 
+                : "text-on-surface-variant hover:text-white"
+            }`}
+          >
+            Views
+          </button>
+        </div>
+      </div>
 
       <div className="grid grid-cols-12 gap-6">
         <MetadataCard data={analysis} />
-        <TimelineCard data={analysis.visual} market={market.positioning} />
+        <TimelineCard 
+          data={analysis.visual} 
+          market={market.positioning} 
+          benchmarkType={benchmarkType}
+        />
         <AudioIntelligence data={analysis.audio} />
         <ContentStrategy data={analysis.semantic} />
         <AccountContext data={analysis.profile} />
