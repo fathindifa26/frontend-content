@@ -1,53 +1,62 @@
-import { Sparkles } from "lucide-react";
-import { MetricGauge } from "../common/MetricGauge";
+import { Eye } from "lucide-react";
 
 interface MarketComparisonProps {
   data?: any;
 }
 
 export function MarketComparison({ data }: MarketComparisonProps) {
-  const positioning = data?.positioning || {};
-  
-  // Mapping some metrics to percentiles from market comparison
-  const retentionVal = Math.round(positioning.followers?.percentile ?? 90);
-  const clickThroughVal = Math.round(positioning.hook_duration_sec?.percentile ?? 60);
-  const engagementVal = Math.round(positioning.word_density_wps?.percentile ?? 75);
-  const shareVal = Math.round(positioning.scene_cut_estimate?.percentile ?? 20);
+  const dummyVideos = [
+    { id: 1, views: "1.2M", similarity: 98 },
+    { id: 2, views: "850K", similarity: 94 },
+    { id: 3, views: "2.4M", similarity: 92 },
+    { id: 4, views: "1.1M", similarity: 89 },
+    { id: 5, views: "920K", similarity: 85 },
+  ];
 
   return (
     <div className="col-span-12 glass-panel p-8 rounded-[40px] space-y-8">
        <div className="flex items-center justify-between">
           <div>
              <h3 className="text-lg font-bold text-white">Market Comparison<span className="dummy-badge">Dummy</span></h3>
-             <p className="text-sm text-on-surface-variant">Benchmarking video performance against global standards.</p>
-          </div>
-          <div className="flex p-1 bg-white/5 rounded-2xl border border-white/10">
-             <button className="px-5 py-2 bg-white/10 text-white text-xs font-bold rounded-xl shadow-lg shadow-black/20 transition-all">Global Market</button>
-             <button className="px-5 py-2 text-on-surface-variant text-xs font-bold rounded-xl hover:text-white transition-all">Filtered Market</button>
+             <p className="text-sm text-on-surface-variant">Top performing videos most similar to your content.</p>
           </div>
        </div>
 
-       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-4">
-          <MetricGauge value={retentionVal} label="Retention Rate" color="tertiary" />
-          <MetricGauge value={clickThroughVal} label="Click Through" color="secondary" />
-          <MetricGauge value={engagementVal} label="Engagement" color="tertiary" />
-          <MetricGauge value={shareVal} label="Share Frequency" color="secondary" />
-       </div>
+       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 py-4">
+          {dummyVideos.map((video) => (
+            <div 
+              key={video.id} 
+              className="aspect-[9/16] rounded-2xl border border-white/10 bg-white/5 relative overflow-hidden group cursor-pointer hover:border-white/30 transition-all duration-300"
+            >
+              {/* Similarity Badge */}
+              <div className="absolute top-3 right-3 z-20">
+                <div className="px-2 py-1 bg-primary/20 backdrop-blur-md border border-primary/30 rounded-lg flex items-center space-x-2 shadow-lg shadow-primary/10">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(79,70,229,0.6)]" />
+                  <span className="text-[10px] font-black text-white">{video.similarity}% Match</span>
+                </div>
+              </div>
 
-       <div className="p-6 bg-primary/10 rounded-[28px] border border-primary/20 flex items-start space-x-5 relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
-          <div className="p-3 bg-primary/20 rounded-2xl text-primary group-hover:scale-110 transition-transform">
-             <Sparkles size={24} />
-          </div>
-          <div className="space-y-2">
-             <p className="text-sm font-bold text-white uppercase tracking-widest">AI Recommendation<span className="dummy-badge">Dummy</span></p>
-             <p className="text-sm text-on-surface/90 leading-relaxed font-medium">
-               {positioning.scene_cut_estimate?.percentile < 50 
-                 ? `To reach the top 10% in the 'Global Market', consider increasing scene cut frequency by 15% and using a higher-tempo background track.`
-                 : `Your editing pace is already above average. Focus on optimizing the Hook Message to further improve retention.`}
-             </p>
-          </div>
+              {/* Placeholder Content */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                  <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-white border-b-[8px] border-b-transparent ml-1" />
+                </div>
+              </div>
+
+              {/* Bottom Info Overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                <div className="flex items-center space-x-2">
+                  <Eye size={12} className="text-white/70" />
+                  <span className="text-[11px] font-bold text-white">{video.views} views</span>
+                </div>
+              </div>
+            </div>
+          ))}
        </div>
     </div>
   );
 }
+
+
+
+
