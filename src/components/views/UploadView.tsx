@@ -85,6 +85,19 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
               <Plus size={16} />
             </button>
           </div>
+
+          <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+             <div className="flex items-center space-x-4">
+                <p className="text-[11px] font-medium text-white/50 leading-relaxed italic">
+                  Market-aware insights. Color-coded badges indicate your video's alignment with performance standards:
+                </p>
+                <div className="flex items-center space-x-2">
+                   <span className="px-2 py-0.5 rounded border border-error/30 bg-error/20 text-error text-[9px] font-bold uppercase shadow-[0_0_10px_rgba(248,113,113,0.1)]">Low</span>
+                   <span className="px-2 py-0.5 rounded border border-success/30 bg-success/20 text-success text-[9px] font-bold uppercase shadow-[0_0_10px_rgba(74,222,128,0.1)]">Mid</span>
+                   <span className="px-2 py-0.5 rounded border border-primary/30 bg-primary/20 text-primary text-[9px] font-bold uppercase shadow-[0_0_10px_rgba(79,70,229,0.1)]">High</span>
+                </div>
+             </div>
+          </div>
         </div>
       </div>
 
