@@ -12,7 +12,7 @@ export function TimelineCard({ data, market, benchmarkType = "frequency" }: Time
   const m = market || {};
 
   return (
-    <div className="col-span-12 lg:col-span-9 glass-panel p-6 rounded-[32px] space-y-6">
+    <div className="col-span-12 lg:col-span-9 glass-panel p-6 rounded-[32px] space-y-6 relative hover:z-[60] transition-all duration-300">
       <div className="flex items-center justify-between">
         <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Visual Timeline</h3>
         <div className="flex space-x-2">

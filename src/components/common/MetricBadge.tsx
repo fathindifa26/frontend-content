@@ -116,12 +116,12 @@ export function MetricBadge({
   const label = labelOverride || (type === "numeric" ? `${Math.round(val)}th Pctl` : `${Math.round(val)}% market`);
 
   return (
-    <div className="group relative">
+    <div className="group relative z-10 hover:z-20">
       <p className={`text-[10px] font-bold px-1.5 py-0.5 rounded border cursor-help transition-all duration-300 ${getColorClasses()}`}>
         {label}
       </p>
       {/* Tooltip */}
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 bg-background/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none">
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 bg-background/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100] pointer-events-none">
         {getTooltipContent()}
       </div>
     </div>

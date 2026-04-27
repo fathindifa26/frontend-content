@@ -108,7 +108,11 @@ export function UploadView({ onUpload, isAnalyzing, data }: UploadViewProps) {
           market={market.positioning} 
           benchmarkType={benchmarkType}
         />
-        <AudioIntelligence data={analysis.audio} />
+        <AudioIntelligence 
+          data={analysis.audio} 
+          market={market} 
+          benchmarkType={benchmarkType} 
+        />
         <ContentStrategy 
           data={analysis.semantic} 
           market={market} 

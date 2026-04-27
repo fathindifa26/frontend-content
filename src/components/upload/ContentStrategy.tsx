@@ -24,7 +24,7 @@ export function ContentStrategy({ data, market, benchmarkType = "frequency" }: C
   };
 
   return (
-    <div className="col-span-12 lg:col-span-6 glass-panel p-6 rounded-[32px] space-y-6">
+    <div className="col-span-12 lg:col-span-6 glass-panel p-6 rounded-[32px] space-y-6 relative hover:z-[60] transition-all duration-300">
        <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Content Strategy</h3>
        <div className="grid grid-cols-3 gap-4">
           <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
