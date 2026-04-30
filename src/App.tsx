@@ -93,12 +93,13 @@ export default function App() {
             <UploadView 
               onUpload={handleUpload} 
               onUrlSubmit={handleUrlSubmit}
-              onRegenerate={handleRegenerate}
               isAnalyzing={isAnalyzing} 
-              data={analysisResult} 
             />
           ) : (
-            <DashboardView />
+            <DashboardView 
+              data={analysisResult}
+              onRegenerate={handleRegenerate}
+            />
           )}
         </main>
       </div>
