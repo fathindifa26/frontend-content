@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Send, Sparkles, Loader2, X } from "lucide-react";
+import { Send, Sparkles, Loader2, X, Bot, User, ChevronUp, ChevronDown } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
+
+interface Message {
+  id: string;
+  text: string;
+  sender: "user" | "bot";
+  timestamp: Date;
+}
 
 interface AIChatAgentProps {
   onDataUpdate?: () => void;
@@ -9,9 +17,13 @@ interface AIChatAgentProps {
 
 export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [historyHeight, setHistoryHeight] = useState(400); // Dynamic height
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     if (isExpanded && inputRef.current) {
@@ -19,21 +31,40 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
     }
   }, [isExpanded]);
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, showHistory]);
+
   const handleSend = async () => {
     if (!input.trim() || isTyping) return;
     
     const userText = input.trim();
+    const newUserMsg: Message = {
+      id: Date.now().toString(),
+      text: userText,
+      sender: "user",
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, newUserMsg]);
     setInput("");
     setIsTyping(true);
+    setShowHistory(true); // Auto show history when sending
     
     try {
-      // For now, we only send the latest message as we've hidden the history window
+      const history = messages.map(m => ({
+        role: m.sender === 'user' ? 'user' : 'assistant',
+        content: m.text
+      }));
+
       const response = await fetch("http://localhost:8000/api/agent/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: userText,
-          history: [] // History is cleared as per user request to hide conversation
+          history: history
         })
       });
 
@@ -41,7 +72,15 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
 
       const data = await response.json();
       
-      // Handle tool updates
+      const botMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        text: data.answer,
+        sender: "bot",
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, botMsg]);
+
       if (data.tool_used && data.tool_used.length > 0) {
         if (onDataUpdate) onDataUpdate();
 
@@ -54,9 +93,6 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
           setTimeout(() => setHighlight(null), 5000);
         }
       }
-
-      // Close after success or keep open? Let's keep it open but show success state if needed
-      // For now, let's just reset
     } catch (error) {
       console.error("Chat error:", error);
     } finally {
@@ -66,6 +102,99 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
 
   return (
     <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center">
+      {/* Conversation Window */}
+      <AnimatePresence>
+        {showHistory && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95, filter: "blur(10px)" }}
+            animate={{ 
+              opacity: 1, 
+              y: 0, 
+              scale: 1, 
+              filter: "blur(0px)",
+              height: historyHeight 
+            }}
+            exit={{ opacity: 0, y: 20, scale: 0.95, filter: "blur(10px)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="glass-panel w-[640px] mb-4 rounded-[32px] border border-white/10 flex flex-col overflow-hidden shadow-2xl origin-bottom"
+          >
+            {/* Window Header */}
+            <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                  <Bot size={16} />
+                </div>
+                <span className="text-xs font-bold text-white/60 tracking-wider uppercase">AI Strategist Thread</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button 
+                  onClick={() => setHistoryHeight(h => h === 400 ? 650 : 400)}
+                  className="p-1.5 hover:bg-white/5 rounded-lg text-white/20 hover:text-white transition-all"
+                >
+                  {historyHeight === 400 ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </button>
+                <button 
+                  onClick={() => setShowHistory(false)}
+                  className="p-1.5 hover:bg-white/5 rounded-lg text-white/20 hover:text-white transition-all"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Messages Area */}
+            <div 
+              ref={scrollRef}
+              className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar"
+            >
+              {messages.map((msg) => (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`flex items-start space-x-3 max-w-[85%] ${msg.sender === 'user' ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}>
+                    <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center border ${
+                      msg.sender === 'user' ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-white/5 border-white/10 text-white/40'
+                    }`}>
+                      {msg.sender === 'user' ? <User size={14} /> : <Bot size={14} />}
+                    </div>
+                    <div className={`p-4 rounded-[24px] text-[13.5px] font-medium leading-relaxed shadow-lg ${
+                      msg.sender === 'user' 
+                        ? 'bg-primary text-white rounded-tr-none' 
+                        : 'bg-white/5 text-white/80 border border-white/5 rounded-tl-none'
+                    }`}>
+                      <div className="prose prose-invert prose-sm max-w-none">
+                        <ReactMarkdown 
+                          components={{
+                            ul: ({node, ...props}) => <ul className="list-disc ml-4 space-y-1 mb-2" {...props} />,
+                            li: ({node, ...props}) => <li className="marker:text-indigo-400" {...props} />,
+                            p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                            strong: ({node, ...props}) => <strong className="text-white font-bold" {...props} />
+                          }}
+                        >
+                          {msg.text}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+              {isTyping && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                  <div className="flex items-center space-x-2 bg-white/5 px-4 py-3 rounded-full border border-white/5">
+                    <Loader2 size={14} className="animate-spin text-indigo-400" />
+                    <span className="text-[11px] text-white/40 font-bold uppercase tracking-wider">AI Thinking...</span>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Chat Bar Container */}
       <motion.div
         layout
         initial={false}
@@ -77,12 +206,12 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
         className="relative group pointer-events-auto"
         onClick={() => !isExpanded && setIsExpanded(true)}
       >
-        {/* Animated Outer Glow (Same as Start Button) */}
+        {/* Animated Outer Glow */}
         <div className={`absolute -inset-1 bg-gradient-to-r from-rose-500 via-amber-400 to-primary rounded-[32px] blur-xl opacity-20 group-hover:opacity-40 transition-all duration-1000 ${
           isExpanded ? "opacity-10 group-hover:opacity-10" : ""
         }`} />
         
-        {/* The Rotating AI Gradient Border (Same as Start Button) */}
+        {/* The Rotating AI Gradient Border */}
         <div className="absolute -inset-[1.5px] overflow-hidden rounded-[31px]">
           <div className={`absolute inset-[-200%] opacity-100 bg-[conic-gradient(from_0deg,transparent_20%,#f43f5e_30%,#fbbf24_45%,#4f46e5_60%,transparent_70%)] ${
             isExpanded ? "animate-none rotate-45 opacity-20" : "animate-[spin_4s_linear_infinite]"
@@ -133,6 +262,17 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
                 exit={{ opacity: 0, x: 10 }}
                 className="flex items-center ml-2 space-x-2"
               >
+                {/* Toggle History Button */}
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (messages.length > 0) setShowHistory(!showHistory);
+                  }}
+                  className={`p-2 rounded-lg transition-colors ${showHistory ? 'bg-white/10 text-white' : 'text-white/20 hover:text-white/40'}`}
+                >
+                  <ChevronUp size={18} className={`transition-transform duration-300 ${showHistory ? 'rotate-180' : ''}`} />
+                </button>
+
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
@@ -151,6 +291,7 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsExpanded(false);
+                    setShowHistory(false);
                   }}
                   className="p-1 text-white/10 hover:text-white/40 transition-colors"
                 >
