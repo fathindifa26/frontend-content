@@ -45,6 +45,7 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
           <SatisfyingStartButton 
             isProcessing={true} 
             onClick={() => {}} 
+            onStop={() => setIsProcessing(false)}
           />
         </div>
       )}
