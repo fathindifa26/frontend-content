@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sidebar } from "./components/layout/Sidebar";
 import { Header } from "./components/layout/Header";
@@ -17,6 +17,11 @@ export default function App() {
   const [briefsData, setBriefsData] = useState<any[] | null>(null);
   const [activeHighlights, setActiveHighlights] = useState<string[]>([]);
   const [selectedContexts, setSelectedContexts] = useState<{ id: string, type: string, target: string, text?: string, index?: number }[]>([]);
+
+  // Load existing data on mount
+  useEffect(() => {
+    refreshData();
+  }, []);
 
   const addHighlight = (component: string) => {
     setActiveHighlights(prev => prev.includes(component) ? prev : [...prev, component]);

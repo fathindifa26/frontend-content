@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { PenTool, Sparkles, ChevronLeft, ChevronRight, FileText, Wand2, RefreshCw, PlusCircle, ArrowLeft, Loader2, Copy, CheckCircle2 } from "lucide-react";
 
@@ -226,6 +226,13 @@ export function NewBriefRecommendation({
   const [current, setCurrent] = useState(0);
   const [generatedPrompts, setGeneratedPrompts] = useState<Record<number, string>>({});
   const [loadingPrompts, setLoadingPrompts] = useState<Record<number, boolean>>({});
+  
+  // Auto-switch to result view if briefs exist
+  useEffect(() => {
+    if (persistedBriefs && persistedBriefs.length > 0 && persistedView === "selection") {
+      setPersistedView("result");
+    }
+  }, [persistedBriefs, persistedView, setPersistedView]);
 
   const handleGenerate = async () => {
     setPersistedView("loading");
