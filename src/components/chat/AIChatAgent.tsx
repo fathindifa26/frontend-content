@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Send, Sparkles, Loader2, X, Bot, User, ChevronUp, ChevronDown } from "lucide-react";
+import { Send, Sparkles, Loader2, X, Bot, User, ChevronUp, ChevronDown, Zap } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
   text: string;
-  sender: "user" | "bot";
+  sender: "user" | "bot" | "tool";
   timestamp: Date;
 }
 
@@ -18,7 +18,7 @@ interface AIChatAgentProps {
 export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  const [historyHeight, setHistoryHeight] = useState(400); // Dynamic height
+  const [historyHeight, setHistoryHeight] = useState(400);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -51,10 +51,10 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
     setMessages(prev => [...prev, newUserMsg]);
     setInput("");
     setIsTyping(true);
-    setShowHistory(true); // Auto show history when sending
+    setShowHistory(true);
     
     try {
-      const history = messages.map(m => ({
+      const history = messages.filter(m => m.sender !== 'tool').map(m => ({
         role: m.sender === 'user' ? 'user' : 'assistant',
         content: m.text
       }));
@@ -72,16 +72,18 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
 
       const data = await response.json();
       
-      const botMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        text: data.answer,
-        sender: "bot",
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, botMsg]);
-
+      // Handle tool updates first
       if (data.tool_used && data.tool_used.length > 0) {
+        data.tool_used.forEach((tool: string, index: number) => {
+          const toolMsg: Message = {
+            id: `tool-${Date.now()}-${index}`,
+            text: `Executing Tool: ${tool.replace(/_/g, ' ')}`,
+            sender: "tool",
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, toolMsg]);
+        });
+
         if (onDataUpdate) onDataUpdate();
 
         const modifiedTool = data.tool_used.find((t: string) => t.includes('modify'));
@@ -93,6 +95,16 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
           setTimeout(() => setHighlight(null), 5000);
         }
       }
+
+      const botMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        text: data.answer,
+        sender: "bot",
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, botMsg]);
+
     } catch (error) {
       console.error("Chat error:", error);
     } finally {
@@ -154,31 +166,40 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex items-start space-x-3 max-w-[85%] ${msg.sender === 'user' ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}>
-                    <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center border ${
-                      msg.sender === 'user' ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-white/5 border-white/10 text-white/40'
-                    }`}>
-                      {msg.sender === 'user' ? <User size={14} /> : <Bot size={14} />}
-                    </div>
-                    <div className={`p-4 rounded-[24px] text-[13.5px] font-medium leading-relaxed shadow-lg ${
-                      msg.sender === 'user' 
-                        ? 'bg-primary text-white rounded-tr-none' 
-                        : 'bg-white/5 text-white/80 border border-white/5 rounded-tl-none'
-                    }`}>
-                      <div className="prose prose-invert prose-sm max-w-none">
-                        <ReactMarkdown 
-                          components={{
-                            ul: ({node, ...props}) => <ul className="list-disc ml-4 space-y-1 mb-2" {...props} />,
-                            li: ({node, ...props}) => <li className="marker:text-indigo-400" {...props} />,
-                            p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
-                            strong: ({node, ...props}) => <strong className="text-white font-bold" {...props} />
-                          }}
-                        >
-                          {msg.text}
-                        </ReactMarkdown>
+                  {msg.sender === 'tool' ? (
+                    <div className="flex flex-col items-start max-w-[85%]">
+                      <div className="flex items-center space-x-2 mb-1 px-1">
+                        <Zap size={10} className="text-success animate-pulse" />
+                        <span className="text-[10px] font-bold text-success/60 uppercase tracking-widest">Agent Action</span>
+                      </div>
+                      <div className="px-4 py-2.5 bg-success/5 border border-success/20 rounded-[20px] rounded-tl-none backdrop-blur-md shadow-lg shadow-success/5">
+                        <span className="text-[12px] font-bold text-white/70 tracking-tight">
+                          {msg.text.replace('Executing Tool: ', '')}
+                        </span>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className={`flex flex-col max-w-[85%] ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                      <div className={`p-4 rounded-[24px] text-[13.5px] font-medium leading-relaxed shadow-lg ${
+                        msg.sender === 'user' 
+                          ? 'bg-primary text-white rounded-tr-none' 
+                          : 'bg-white/5 text-white/80 border border-white/5 rounded-tl-none'
+                      }`}>
+                        <div className="prose prose-invert prose-sm max-w-none">
+                          <ReactMarkdown 
+                            components={{
+                              ul: ({node, ...props}) => <ul className="list-disc ml-4 space-y-1 mb-2" {...props} />,
+                              li: ({node, ...props}) => <li className="marker:text-indigo-400" {...props} />,
+                              p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                              strong: ({node, ...props}) => <strong className="text-white font-bold" {...props} />
+                            }}
+                          >
+                            {msg.text}
+                          </ReactMarkdown>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </motion.div>
               ))}
               {isTyping && (
