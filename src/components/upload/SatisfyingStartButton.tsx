@@ -27,7 +27,7 @@ export function SatisfyingStartButton({ isProcessing, onClick }: SatisfyingStart
       <button 
         onClick={!isProcessing ? onClick : undefined}
         disabled={isProcessing}
-        className={`relative px-10 py-3.5 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[30px] flex items-center space-x-3 transition-all duration-500 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] ${!isProcessing ? "hover:bg-white/10" : "cursor-default scale-90"}`}
+        className={`relative min-w-[220px] px-10 py-3.5 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[30px] flex items-center justify-center space-x-3 transition-all duration-500 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] ${!isProcessing ? "hover:bg-white/10" : "cursor-default"}`}
       >
         <div className="relative">
            <div className={`absolute inset-0 bg-primary/20 blur-md rounded-full ${isProcessing ? "animate-ping" : "animate-pulse"}`} />
@@ -39,7 +39,7 @@ export function SatisfyingStartButton({ isProcessing, onClick }: SatisfyingStart
         </div>
         
         <span className="text-[15px] font-bold text-white tracking-tight">
-          {isProcessing ? "Processing Analysis" : "Start Engine"}
+          {isProcessing ? "Processing..." : "Start Engine"}
         </span>
         
         {!isProcessing && (
