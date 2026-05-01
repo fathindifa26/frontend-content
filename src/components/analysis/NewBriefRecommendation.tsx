@@ -12,6 +12,7 @@ function BriefCard({
   isGenerating, 
   onGenerate,
   onRegenerate,
+  onRegenerateCard,
   selectedIds = [],
   onToggleContext
 }: { 
@@ -24,10 +25,23 @@ function BriefCard({
   isGenerating?: boolean;
   onGenerate: () => void;
   onRegenerate?: () => void;
+  onRegenerateCard?: () => void;
   selectedIds?: string[];
   onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const [isRegeneratingCard, setIsRegeneratingCard] = useState(false);
+
+  const handleRegenerateCard = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onRegenerateCard) return;
+    setIsRegeneratingCard(true);
+    try {
+      await onRegenerateCard();
+    } finally {
+      setIsRegeneratingCard(false);
+    }
+  };
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -75,10 +89,24 @@ function BriefCard({
             </div>
           </div>
           
-          <div className="bg-white/5 px-4 py-1.5 rounded-full border border-white/5">
-            <span className="text-[11px] font-bold text-white/40 tracking-widest">
-              {index + 1} <span className="text-white/10 mx-1">/</span> {total}
-            </span>
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={handleRegenerateCard}
+              disabled={isRegeneratingCard}
+              className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-white/5 border border-white/5 text-[10px] font-bold uppercase tracking-widest text-white/20 hover:text-white hover:bg-white/10 transition-all disabled:opacity-30"
+            >
+              {isRegeneratingCard ? (
+                <Loader2 size={12} className="animate-spin" />
+              ) : (
+                <RefreshCw size={12} />
+              )}
+              <span>Regenerate</span>
+            </button>
+            <div className="bg-white/5 px-4 py-1.5 rounded-full border border-white/5">
+              <span className="text-[11px] font-bold text-white/40 tracking-widest">
+                {index + 1} <span className="text-white/10 mx-1">/</span> {total}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -212,7 +240,8 @@ export function NewBriefRecommendation({
   persistedView,
   setPersistedView,
   selectedIds = [],
-  onToggleContext
+  onToggleContext,
+  onDataUpdate
 }: { 
   analysisResults: any[],
   persistedBriefs: any[],
@@ -220,12 +249,28 @@ export function NewBriefRecommendation({
   persistedView: "selection" | "loading" | "result",
   setPersistedView: (v: "selection" | "loading" | "result") => void,
   selectedIds?: string[],
-  onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void
+  onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void,
+  onDataUpdate?: () => void
 }) {
   const [mode, setMode] = useState<"improve" | "new">("new");
   const [current, setCurrent] = useState(0);
   const [generatedPrompts, setGeneratedPrompts] = useState<Record<number, string>>({});
   const [loadingPrompts, setLoadingPrompts] = useState<Record<number, boolean>>({});
+
+  const handleRegenerateBrief = async (index: number) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/analysis/regenerate-brief", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ index })
+      });
+      if (response.ok) {
+        if (onDataUpdate) onDataUpdate();
+      }
+    } catch (error) {
+      console.error("Failed to regenerate brief:", error);
+    }
+  };
   
   // Auto-switch to result view if briefs exist
   useEffect(() => {
@@ -412,6 +457,7 @@ TONE: Energetic, Professional, Insightful.`;
               isGenerating={loadingPrompts[current]}
               onGenerate={() => handleGenerateFullPrompt(current)}
               onRegenerate={() => handleGenerateFullPrompt(current)}
+              onRegenerateCard={() => handleRegenerateBrief(current)}
               selectedIds={selectedIds}
               onToggleContext={onToggleContext}
             />

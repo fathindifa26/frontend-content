@@ -15,6 +15,7 @@ export default function App() {
   const [analysisData, setAnalysisData] = useState<any[] | null>(null);
   const [roadmapData, setRoadmapData] = useState<any[] | null>(null);
   const [briefsData, setBriefsData] = useState<any[] | null>(null);
+  const [showResults, setShowResults] = useState(false);
   const [activeHighlights, setActiveHighlights] = useState<string[]>([]);
   const [selectedContexts, setSelectedContexts] = useState<{ id: string, type: string, target: string, text?: string, index?: number }[]>([]);
 
@@ -48,7 +49,9 @@ export default function App() {
     try {
       const response = await fetch("http://localhost:8000/api/analysis/latest");
       const data = await response.json();
-      if (data.results) setAnalysisData(data.results);
+      if (data.results) {
+        setAnalysisData(data.results);
+      }
       if (data.roadmap) setRoadmapData(data.roadmap);
       if (data.briefs) setBriefsData(data.briefs);
     } catch (error) {
@@ -159,6 +162,8 @@ export default function App() {
               selectedContexts={selectedContexts}
               toggleContext={toggleContext}
               onDataUpdate={refreshData}
+              showResults={showResults}
+              setShowResults={setShowResults}
             />
           ) : (
             <DashboardView 
@@ -170,7 +175,7 @@ export default function App() {
       </div>
 
       <AnimatePresence>
-        {analysisData && (
+        {showResults && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

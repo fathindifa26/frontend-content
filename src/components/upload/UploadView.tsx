@@ -22,6 +22,8 @@ interface UploadViewProps {
   selectedContexts?: { id: string, type: string, target: string, text?: string, index?: number }[];
   toggleContext?: (context: { id?: string, type: string, target: string, text?: string, index?: number }) => void;
   onDataUpdate?: () => void;
+  showResults: boolean;
+  setShowResults: (show: boolean) => void;
 }
 
 type LogStatus = "pending" | "current" | "completed";
@@ -45,11 +47,12 @@ export function UploadView({
   removeHighlight,
   selectedContexts,
   toggleContext,
-  onDataUpdate
+  onDataUpdate,
+  showResults,
+  setShowResults
 }: UploadViewProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [showResults, setShowResults] = useState(false);
   const [logs, setLogs] = useState<LogEntry[]>([]);
 
   const handleStart = () => {
