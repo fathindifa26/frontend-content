@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { MessageSquare, X, Send, Sparkles, User, Bot, Maximize2, Minimize2 } from "lucide-react";
+import { X, Send, Sparkles, User, Bot } from "lucide-react";
 
 interface Message {
   id: string;
@@ -9,13 +9,19 @@ interface Message {
   timestamp: Date;
 }
 
-export function AIChatAgent() {
+interface AIChatAgentProps {
+  onDataUpdate?: () => void;
+  setHighlight?: (component: string | null) => void;
+}
+
+export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: "Hello! I'm your AI Creative Assistant. How can I help you optimize your content today?",
+      text: "Hello! I'm your AI Creative Strategist. I can help you analyze, edit, and optimize your content data directly. How can I help today?",
       sender: "bot",
       timestamp: new Date()
     }
@@ -27,31 +33,79 @@ export function AIChatAgent() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, isOpen]);
+  }, [messages, isOpen, isTyping]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async () => {
+    if (!input.trim() || isTyping) return;
     
+    const userText = input.trim();
     const newUserMsg: Message = {
       id: Date.now().toString(),
-      text: input,
+      text: userText,
       sender: "user",
       timestamp: new Date()
     };
     
     setMessages(prev => [...prev, newUserMsg]);
     setInput("");
+    setIsTyping(true);
     
-    // Simulate bot response
-    setTimeout(() => {
+    try {
+      const history = messages.map(m => ({
+        role: m.sender === 'user' ? 'user' : 'assistant',
+        content: m.text
+      }));
+
+      const response = await fetch("http://localhost:8000/api/agent/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userText,
+          history: history
+        })
+      });
+
+      if (!response.ok) throw new Error("Chat failed");
+
+      const data = await response.json();
+      
       const botMsg: Message = {
         id: (Date.now() + 1).toString(),
-        text: "I'm processing your request. As an agent, I can help you refine your hooks, analyze benchmarks, or even draft new scripts. What specifically would you like to focus on?",
+        text: data.answer,
         sender: "bot",
         timestamp: new Date()
       };
+      
       setMessages(prev => [...prev, botMsg]);
-    }, 1000);
+
+      // Handle tool updates
+      if (data.tool_used && data.tool_used.length > 0) {
+        // Refresh data in UI
+        if (onDataUpdate) onDataUpdate();
+
+        // Highlight changed component
+        const modifiedTool = data.tool_used.find((t: string) => t.includes('modify'));
+        if (modifiedTool && setHighlight) {
+          if (userText.toLowerCase().includes('hook')) setHighlight('Hook');
+          else if (userText.toLowerCase().includes('content')) setHighlight('Content');
+          else if (userText.toLowerCase().includes('production')) setHighlight('Production');
+          
+          setTimeout(() => setHighlight(null), 5000);
+        }
+      }
+
+    } catch (error) {
+      console.error("Chat error:", error);
+      const errorMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Sorry, I encountered an error. Please check if the backend is running.",
+        sender: "bot",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   return (
@@ -72,10 +126,10 @@ export function AIChatAgent() {
                   <Sparkles size={20} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white tracking-tight">AI Agentic Assistant</h4>
+                  <h4 className="text-sm font-bold text-white tracking-tight">AI Strategist Agent</h4>
                   <div className="flex items-center space-x-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                    <span className="text-[10px] text-white/30 font-bold uppercase tracking-wider">Online</span>
+                    <span className="text-[10px] text-white/30 font-bold uppercase tracking-wider">Online & Interactive</span>
                   </div>
                 </div>
               </div>
@@ -115,6 +169,15 @@ export function AIChatAgent() {
                   </div>
                 </motion.div>
               ))}
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="flex items-center space-x-2 bg-white/5 p-4 rounded-2xl border border-white/5">
+                    <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce [animation-delay:-0.3s]" />
+                    <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce [animation-delay:-0.15s]" />
+                    <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" />
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -144,11 +207,11 @@ export function AIChatAgent() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Type your message..."
+                placeholder="Ask agent to edit hooks, remove points, etc..."
                 className="w-full bg-transparent border-none text-sm text-white placeholder:text-white/20 focus:outline-none"
               />
             ) : (
-              <span className="text-sm text-white/20 font-medium">Ask AI agent anything...</span>
+              <span className="text-sm text-white/20 font-medium">Chat with AI Agent to modify results...</span>
             )}
           </div>
 
@@ -156,7 +219,7 @@ export function AIChatAgent() {
             {isOpen ? (
               <button 
                 onClick={handleSend}
-                disabled={!input.trim()}
+                disabled={!input.trim() || isTyping}
                 className="p-1.5 bg-primary text-white rounded-lg hover:scale-105 active:scale-95 disabled:opacity-50 transition-all"
               >
                 <Send size={16} />

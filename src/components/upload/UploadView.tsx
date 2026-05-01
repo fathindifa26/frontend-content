@@ -11,6 +11,11 @@ interface UploadViewProps {
   onUpload: (file: File) => void;
   onUrlSubmit: (url: string) => void;
   isAnalyzing: boolean;
+  analysisData: any[] | null;
+  setAnalysisData: (data: any[] | null) => void;
+  roadmapData: any[] | null;
+  setRoadmapData: (data: any[] | null) => void;
+  highlightedComponent?: string | null;
 }
 
 type LogStatus = "pending" | "current" | "completed";
@@ -20,7 +25,16 @@ interface LogEntry {
   status: LogStatus;
 }
 
-export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewProps) {
+export function UploadView({ 
+  onUpload, 
+  onUrlSubmit, 
+  isAnalyzing,
+  analysisData,
+  setAnalysisData,
+  roadmapData,
+  setRoadmapData,
+  highlightedComponent
+}: UploadViewProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -32,9 +46,6 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
       { id: "1", message: "Downloading video...", status: "current" }
     ]);
   };
-
-  const [analysisData, setAnalysisData] = useState<any[] | null>(null);
-  const [roadmapData, setRoadmapData] = useState<any[] | null>(null);
 
   useEffect(() => {
     if (!isProcessing || isFinished) return;
@@ -52,9 +63,9 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
           { id: "3", message: "Finalizing results...", status: "current" }
         ]);
       } else if (logs.length === 3) {
-        // Fetch real data from backend
+        // Fetch real data from backend - Trigger FRESH analysis
         try {
-          const response = await fetch("http://localhost:8000/api/analysis/latest");
+          const response = await fetch("http://localhost:8000/api/analysis/generate");
           const data = await response.json();
           if (data.results) {
             setAnalysisData(data.results);
@@ -135,6 +146,7 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
           <AnalysisResults 
             results={analysisData || undefined} 
             roadmap={roadmapData || undefined} 
+            highlightedComponent={highlightedComponent}
           />
         )}
       </AnimatePresence>

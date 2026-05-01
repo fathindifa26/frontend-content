@@ -9,6 +9,22 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "upload">("upload");
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  
+  // Real-time data states for Agent
+  const [analysisData, setAnalysisData] = useState<any[] | null>(null);
+  const [roadmapData, setRoadmapData] = useState<any[] | null>(null);
+  const [highlightedComponent, setHighlightedComponent] = useState<string | null>(null);
+
+  const refreshData = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/analysis/latest");
+      const data = await response.json();
+      if (data.results) setAnalysisData(data.results);
+      if (data.roadmap) setRoadmapData(data.roadmap);
+    } catch (error) {
+      console.error("Failed to refresh data:", error);
+    }
+  };
 
   const handleUpload = async (file: File) => {
     setIsAnalyzing(true);
@@ -95,6 +111,11 @@ export default function App() {
               onUpload={handleUpload} 
               onUrlSubmit={handleUrlSubmit}
               isAnalyzing={isAnalyzing} 
+              analysisData={analysisData}
+              setAnalysisData={setAnalysisData}
+              roadmapData={roadmapData}
+              setRoadmapData={setRoadmapData}
+              highlightedComponent={highlightedComponent}
             />
           ) : (
             <DashboardView 
@@ -105,7 +126,10 @@ export default function App() {
         </main>
       </div>
 
-      <AIChatAgent />
+      <AIChatAgent 
+        onDataUpdate={refreshData} 
+        setHighlight={setHighlightedComponent}
+      />
     </div>
   );
 }

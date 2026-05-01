@@ -17,21 +17,25 @@ interface ResultCardProps {
   score: number;
   points: Point[];
   delay: number;
+  isHighlighted?: boolean;
 }
 
-function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCardProps) {
+function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighlighted }: ResultCardProps) {
   const themes = {
     rose: {
       base: "bg-rose-500/5 border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.1)] text-rose-500",
-      hover: "hover:border-rose-500/40 hover:shadow-[0_0_40px_rgba(244,63,94,0.2)] hover:bg-rose-500/10"
+      hover: "hover:border-rose-500/40 hover:shadow-[0_0_40px_rgba(244,63,94,0.2)] hover:bg-rose-500/10",
+      glow: "ring-4 ring-rose-500/50 shadow-[0_0_60px_rgba(244,63,94,0.4)] bg-rose-500/20 border-rose-500/60"
     },
     blue: {
       base: "bg-primary/5 border-primary/20 shadow-[0_0_20px_rgba(79,70,229,0.1)] text-primary",
-      hover: "hover:border-primary/40 hover:shadow-[0_0_40px_rgba(79,70,229,0.2)] hover:bg-primary/10"
+      hover: "hover:border-primary/40 hover:shadow-[0_0_40px_rgba(79,70,229,0.2)] hover:bg-primary/10",
+      glow: "ring-4 ring-primary/50 shadow-[0_0_60px_rgba(79,70,229,0.4)] bg-primary/20 border-primary/60"
     },
     amber: {
       base: "bg-amber-400/5 border-amber-400/20 shadow-[0_0_20px_rgba(251,191,36,0.1)] text-amber-400",
-      hover: "hover:border-amber-400/40 hover:shadow-[0_0_40px_rgba(251,191,36,0.2)] hover:bg-amber-400/10"
+      hover: "hover:border-amber-400/40 hover:shadow-[0_0_40px_rgba(251,191,36,0.2)] hover:bg-amber-400/10",
+      glow: "ring-4 ring-amber-400/50 shadow-[0_0_60px_rgba(251,191,36,0.4)] bg-amber-400/20 border-amber-400/60"
     }
   };
 
@@ -40,13 +44,19 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={{ 
+        opacity: 1, 
+        y: 0,
+        scale: isHighlighted ? 1.02 : 1,
+      }}
       whileHover={{ 
         y: -5,
         transition: { type: "spring", stiffness: 400, damping: 25 }
       }}
       transition={{ type: "spring", stiffness: 300, damping: 30, delay }}
-      className={`glass-panel p-8 rounded-[40px] flex flex-col space-y-8 cursor-default transition-all duration-500 border min-h-[550px] ${currentTheme.base} ${currentTheme.hover}`}
+      className={`glass-panel p-8 rounded-[40px] flex flex-col space-y-8 cursor-default transition-all duration-700 border min-h-[550px] ${
+        isHighlighted ? currentTheme.glow : `${currentTheme.base} ${currentTheme.hover}`
+      }`}
     >
       {/* Header Section */}
       <div className="flex items-center justify-between w-full">
@@ -101,7 +111,15 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
   );
 }
 
-export function AnalysisResults({ results: externalResults, roadmap: externalRoadmap }: { results?: any[], roadmap?: any[] }) {
+export function AnalysisResults({ 
+  results: externalResults, 
+  roadmap: externalRoadmap,
+  highlightedComponent 
+}: { 
+  results?: any[], 
+  roadmap?: any[],
+  highlightedComponent?: string | null
+}) {
   const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
   const [isViewAll, setIsViewAll] = useState(false);
   
@@ -185,7 +203,12 @@ export function AnalysisResults({ results: externalResults, roadmap: externalRoa
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {results.map((res: any) => (
-            <ResultCard key={res.title} {...res} delay={0.1} />
+            <ResultCard 
+              key={res.title} 
+              {...res} 
+              delay={0.1} 
+              isHighlighted={highlightedComponent === res.title}
+            />
           ))}
         </div>
         <OptimizationRoadmap data={externalRoadmap} />
@@ -269,6 +292,7 @@ export function AnalysisResults({ results: externalResults, roadmap: externalRoa
                     key={res.title}
                     {...res}
                     delay={0.1 * (i + 1)} 
+                    isHighlighted={highlightedComponent === res.title}
                   />
                 ))}
               </div>
