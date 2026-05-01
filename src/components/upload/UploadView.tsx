@@ -1,4 +1,5 @@
 import { UploadHeader } from "./UploadHeader";
+import { BenchmarkConfig } from "./BenchmarkConfig";
 
 interface UploadViewProps {
   onUpload: (file: File) => void;
@@ -14,6 +15,8 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
         onUrlSubmit={onUrlSubmit}
         isAnalyzing={isAnalyzing} 
       />
+
+      <BenchmarkConfig />
     </div>
   );
 }
