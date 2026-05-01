@@ -14,7 +14,15 @@ export default function App() {
   // Real-time data states for Agent
   const [analysisData, setAnalysisData] = useState<any[] | null>(null);
   const [roadmapData, setRoadmapData] = useState<any[] | null>(null);
-  const [highlightedComponent, setHighlightedComponent] = useState<string | null>(null);
+  const [activeHighlights, setActiveHighlights] = useState<string[]>([]);
+
+  const addHighlight = (component: string) => {
+    setActiveHighlights(prev => prev.includes(component) ? prev : [...prev, component]);
+  };
+
+  const removeHighlight = (component: string) => {
+    setActiveHighlights(prev => prev.filter(c => c !== component));
+  };
 
   const refreshData = async () => {
     try {
@@ -101,7 +109,11 @@ export default function App() {
     <div className="flex min-h-screen bg-transparent selection:bg-primary/30">
       <div className="mesh-bg" />
       
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        activeHighlights={activeHighlights}
+      />
       
       {/* Sidebar Spacer - ensures content is aligned with the fixed mini-sidebar */}
       <div className="w-20 shrink-0" />
@@ -119,7 +131,8 @@ export default function App() {
               setAnalysisData={setAnalysisData}
               roadmapData={roadmapData}
               setRoadmapData={setRoadmapData}
-              highlightedComponent={highlightedComponent}
+              activeHighlights={activeHighlights}
+              removeHighlight={removeHighlight}
             />
           ) : (
             <DashboardView 
@@ -139,7 +152,7 @@ export default function App() {
           >
             <AIChatAgent 
               onDataUpdate={refreshData} 
-              setHighlight={setHighlightedComponent}
+              setHighlight={addHighlight}
             />
           </motion.div>
         )}

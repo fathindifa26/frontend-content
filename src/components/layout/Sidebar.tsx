@@ -8,9 +8,10 @@ interface SidebarItemProps {
   active?: boolean;
   onClick: () => void;
   isExpanded: boolean;
+  hasNotification?: boolean;
 }
 
-function SidebarItem({ icon: Icon, label, active = false, onClick, isExpanded }: SidebarItemProps) {
+function SidebarItem({ icon: Icon, label, active = false, onClick, isExpanded, hasNotification }: SidebarItemProps) {
   return (
     <motion.button 
       whileHover={{ x: isExpanded ? 4 : 0 }}
@@ -21,7 +22,12 @@ function SidebarItem({ icon: Icon, label, active = false, onClick, isExpanded }:
           : "text-on-surface-variant hover:text-white"
       } ${isExpanded ? "space-x-3" : "justify-center"}`}
     >
-      <Icon size={18} className={active ? "text-primary" : "text-on-surface-variant group-hover:text-white transition-colors"} />
+      <div className="relative">
+        <Icon size={18} className={active ? "text-primary" : "text-on-surface-variant group-hover:text-white transition-colors"} />
+        {hasNotification && (
+          <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-background animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
+        )}
+      </div>
       
       <AnimatePresence>
         {isExpanded && (
@@ -49,10 +55,13 @@ function SidebarItem({ icon: Icon, label, active = false, onClick, isExpanded }:
 interface SidebarProps {
   activeTab: "dashboard" | "upload";
   setActiveTab: (tab: "dashboard" | "upload") => void;
+  activeHighlights?: string[];
 }
 
-export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
+export function Sidebar({ activeTab, setActiveTab, activeHighlights = [] }: SidebarProps) {
   const [isHovered, setIsHovered] = useState(false);
+  
+  const hasUploadNotification = activeHighlights.some(h => ['Hook', 'Content', 'Production'].includes(h));
 
   return (
     <motion.aside 
@@ -90,6 +99,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             active={activeTab === "upload"} 
             onClick={() => setActiveTab("upload")}
             isExpanded={isHovered}
+            hasNotification={hasUploadNotification}
           />
           <SidebarItem 
             icon={LayoutDashboard} 

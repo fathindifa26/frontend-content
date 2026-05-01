@@ -15,7 +15,8 @@ interface UploadViewProps {
   setAnalysisData: (data: any[] | null) => void;
   roadmapData: any[] | null;
   setRoadmapData: (data: any[] | null) => void;
-  highlightedComponent?: string | null;
+  activeHighlights?: string[];
+  removeHighlight?: (component: string) => void;
 }
 
 type LogStatus = "pending" | "current" | "completed";
@@ -33,7 +34,8 @@ export function UploadView({
   setAnalysisData,
   roadmapData,
   setRoadmapData,
-  highlightedComponent
+  activeHighlights,
+  removeHighlight
 }: UploadViewProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -164,16 +166,14 @@ export function UploadView({
         )}
       </AnimatePresence>
 
-      {/* Results View */}
-      <AnimatePresence>
         {showResults && (
           <AnalysisResults 
             results={analysisData || undefined} 
             roadmap={roadmapData || undefined} 
-            highlightedComponent={highlightedComponent}
+            activeHighlights={activeHighlights}
+            removeHighlight={removeHighlight}
           />
         )}
-      </AnimatePresence>
 
       {!isProcessing && !showResults && (
         <motion.div 
