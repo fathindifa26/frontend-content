@@ -28,7 +28,7 @@ export function UploadHeader({ onUpload, onUrlSubmit, isAnalyzing }: UploadHeade
     }
   };
 
-  const springConfig = { type: "spring", stiffness: 300, damping: 25, mass: 1 };
+  const springConfig = { type: "spring", stiffness: 300, damping: 25, mass: 1 } as const;
 
   return (
     <motion.div 
