@@ -1,5 +1,6 @@
-import { motion } from "motion/react";
-import { Zap, Layout, Video } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Zap, Layout, Video, ChevronRight } from "lucide-react";
 import { OptimizationRoadmap } from "./OptimizationRoadmap";
 import { NewBriefRecommendation } from "./NewBriefRecommendation";
 
@@ -101,6 +102,17 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
 }
 
 export function AnalysisResults() {
+  const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
+  const [isViewAll, setIsViewAll] = useState(false);
+
+  const showAll = () => {
+    setIsViewAll(true);
+  };
+
+  const closeViewAll = () => {
+    setIsViewAll(false);
+  };
+
   const dummyResults = [
     {
       title: "Hook",
@@ -138,28 +150,144 @@ export function AnalysisResults() {
     }
   ];
 
+  const sections = [
+    { id: "results", label: "Analysis Results" },
+    { id: "roadmap", label: "Optimization Roadmap" },
+    { id: "brief", label: "New Brief" }
+  ];
+
+  if (isViewAll) {
+    return (
+      <div className="flex flex-col space-y-24 pt-12 pb-48">
+        <div className="flex justify-between items-center px-4">
+          <h2 className="text-2xl font-black text-white tracking-tighter">Full Analysis Report</h2>
+          <button 
+            onClick={closeViewAll}
+            className="px-6 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-all"
+          >
+            Back to Focus Mode
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {dummyResults.map((res) => (
+            <ResultCard key={res.title} {...res} delay={0.1} />
+          ))}
+        </div>
+        <OptimizationRoadmap />
+        <NewBriefRecommendation />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col space-y-16 pt-12 pb-32">
-      {/* Top Grid: Analysis Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {dummyResults.map((res, i) => (
-          <ResultCard 
-            key={res.title}
-            title={res.title}
-            icon={res.icon}
-            theme={res.theme}
-            score={res.score}
-            points={res.points}
-            delay={0.1 * (i + 1)} 
-          />
-        ))}
+    <div className="flex flex-col pt-12 pb-48 min-h-[800px]">
+      {/* Navigation Header */}
+      <div className="flex items-center justify-between mb-12 px-4">
+        <div className="flex items-center space-x-2 bg-white/5 p-1 rounded-2xl border border-white/5">
+          {sections.map((s, i) => (
+            <button
+              key={s.id}
+              onClick={() => setActiveSection(s.id as any)}
+              className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                activeSection === s.id 
+                  ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                  : "text-white/20 hover:text-white/40"
+              }`}
+            >
+              {i + 1}. {s.label}
+            </button>
+          ))}
+        </div>
+
+        <button 
+          onClick={showAll}
+          className="text-[10px] font-bold text-white/10 hover:text-primary transition-colors uppercase tracking-widest"
+        >
+          View All
+        </button>
       </div>
 
-      {/* Bottom Section: Carousel Recommendations */}
-      <OptimizationRoadmap />
+      {/* Focus Area */}
+      <div className="relative flex-1">
+        <AnimatePresence mode="wait">
+          {activeSection === "results" && (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0, x: 20, filter: "blur(10px)" }}
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, x: -20, filter: "blur(10px)" }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="space-y-12"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {dummyResults.map((res, i) => (
+                  <ResultCard 
+                    key={res.title}
+                    {...res}
+                    delay={0.1 * (i + 1)} 
+                  />
+                ))}
+              </div>
+              
+              <div className="flex justify-center pt-12">
+                <button 
+                  onClick={() => setActiveSection("roadmap")}
+                  className="glass-panel px-10 py-5 rounded-[24px] border-white/10 hover:bg-white/5 transition-all group flex items-center space-x-4"
+                >
+                  <div className="flex flex-col items-start">
+                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Next Step</span>
+                    <span className="text-lg font-black text-white tracking-tight">Optimization Roadmap</span>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                    <ChevronRight size={20} className="text-primary" />
+                  </div>
+                </button>
+              </div>
+            </motion.div>
+          )}
 
-      {/* New Brief Section */}
-      <NewBriefRecommendation />
+          {activeSection === "roadmap" && (
+            <motion.div
+              key="roadmap"
+              initial={{ opacity: 0, x: 20, filter: "blur(10px)" }}
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, x: -20, filter: "blur(10px)" }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="space-y-12"
+            >
+              <OptimizationRoadmap />
+              
+              <div className="flex justify-center pt-12">
+                <button 
+                  onClick={() => setActiveSection("brief")}
+                  className="glass-panel px-10 py-5 rounded-[24px] border-white/10 hover:bg-white/5 transition-all group flex items-center space-x-4"
+                >
+                  <div className="flex flex-col items-start">
+                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Next Step</span>
+                    <span className="text-lg font-black text-white tracking-tight">New Brief Strategy</span>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                    <ChevronRight size={20} className="text-indigo-400" />
+                  </div>
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {activeSection === "brief" && (
+            <motion.div
+              key="brief"
+              initial={{ opacity: 0, x: 20, filter: "blur(10px)" }}
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, x: -20, filter: "blur(10px)" }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            >
+              <NewBriefRecommendation />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
