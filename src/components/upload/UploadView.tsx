@@ -1,5 +1,6 @@
 import { UploadHeader } from "./UploadHeader";
 import { BenchmarkConfig } from "./BenchmarkConfig";
+import { SatisfyingStartButton } from "./SatisfyingStartButton";
 
 interface UploadViewProps {
   onUpload: (file: File) => void;
@@ -17,6 +18,8 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
       />
 
       <BenchmarkConfig />
+
+      <SatisfyingStartButton />
     </div>
   );
 }
