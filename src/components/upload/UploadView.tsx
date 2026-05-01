@@ -34,6 +34,7 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
   };
 
   const [analysisData, setAnalysisData] = useState<any[] | null>(null);
+  const [roadmapData, setRoadmapData] = useState<any[] | null>(null);
 
   useEffect(() => {
     if (!isProcessing || isFinished) return;
@@ -57,6 +58,9 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
           const data = await response.json();
           if (data.results) {
             setAnalysisData(data.results);
+          }
+          if (data.roadmap) {
+            setRoadmapData(data.roadmap);
           }
         } catch (error) {
           console.error("Failed to fetch analysis data:", error);
@@ -127,7 +131,7 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
 
       {/* Results View */}
       <AnimatePresence>
-        {showResults && <AnalysisResults results={analysisData || undefined} />}
+        {showResults && <AnalysisResults results={analysisData || undefined} roadmap={roadmapData || undefined} />}
       </AnimatePresence>
 
       {!isProcessing && !showResults && (

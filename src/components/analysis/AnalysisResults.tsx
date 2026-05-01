@@ -46,7 +46,7 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
         transition: { type: "spring", stiffness: 400, damping: 25 }
       }}
       transition={{ type: "spring", stiffness: 300, damping: 30, delay }}
-      className={`glass-panel p-6 rounded-[40px] flex flex-col space-y-6 cursor-default transition-all duration-500 border ${currentTheme.base} ${currentTheme.hover}`}
+      className={`glass-panel p-8 rounded-[40px] flex flex-col space-y-8 cursor-default transition-all duration-500 border min-h-[550px] ${currentTheme.base} ${currentTheme.hover}`}
     >
       {/* Header Section */}
       <div className="flex items-center justify-between w-full">
@@ -55,23 +55,23 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
             <Icon size={24} strokeWidth={1.5} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white tracking-tight">{title}</h3>
-            <p className="text-[10px] text-white/30 font-bold uppercase tracking-wider">Analysis Result</p>
+            <h3 className="text-xl font-bold text-white tracking-tight">{title}</h3>
+            <p className="text-[11px] text-white/30 font-bold uppercase tracking-wider">Analysis Result</p>
           </div>
         </div>
         
         <div className="flex flex-col items-end">
-          <span className={`text-2xl font-black italic tracking-tighter ${theme === 'rose' ? 'text-rose-500' : theme === 'blue' ? 'text-primary' : 'text-amber-400'}`}>
+          <span className={`text-3xl font-black italic tracking-tighter ${theme === 'rose' ? 'text-rose-500' : theme === 'blue' ? 'text-primary' : 'text-amber-400'}`}>
             {(score * 10).toFixed(1)}
           </span>
-          <span className="text-[8px] text-white/20 font-bold -mt-1 uppercase">Avg Score</span>
+          <span className="text-[9px] text-white/20 font-bold -mt-1 uppercase">Avg Score</span>
         </div>
       </div>
 
       <div className="w-full h-px bg-white/5" />
 
       {/* Points List */}
-      <div className="flex flex-col space-y-3 flex-1 overflow-y-auto max-h-[300px] pr-1 custom-scrollbar">
+      <div className="flex flex-col space-y-4 flex-1 overflow-y-auto max-h-[500px] pr-1 custom-scrollbar">
         {points.map((point, idx) => (
           <motion.div
             key={idx}
@@ -85,10 +85,10 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
             }`}
           >
             <div className="flex items-start space-x-3">
-              <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${
+              <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
                 point.type === "strength" ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"
               }`} />
-              <p className={`text-[12px] font-medium leading-relaxed ${
+              <p className={`text-[14px] font-medium leading-relaxed ${
                 point.type === "strength" ? "text-success/90" : "text-rose-500/90"
               }`}>
                 {point.text}
@@ -101,7 +101,7 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
   );
 }
 
-export function AnalysisResults({ results: externalResults }: { results?: any[] }) {
+export function AnalysisResults({ results: externalResults, roadmap: externalRoadmap }: { results?: any[], roadmap?: any[] }) {
   const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
   const [isViewAll, setIsViewAll] = useState(false);
 
@@ -184,7 +184,7 @@ export function AnalysisResults({ results: externalResults }: { results?: any[] 
             <ResultCard key={res.title} {...res} delay={0.1} />
           ))}
         </div>
-        <OptimizationRoadmap />
+        <OptimizationRoadmap data={externalRoadmap} />
         <NewBriefRecommendation />
       </div>
     );
@@ -289,7 +289,7 @@ export function AnalysisResults({ results: externalResults }: { results?: any[] 
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className="space-y-12"
             >
-              <OptimizationRoadmap />
+              <OptimizationRoadmap data={externalRoadmap} />
               
               <div className="flex justify-center pt-12">
                 <button 

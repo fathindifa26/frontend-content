@@ -67,10 +67,10 @@ function RecommendationCard({ title, theme, points, delay }: RecommendationCardP
   );
 }
 
-export function OptimizationRoadmap() {
+export function OptimizationRoadmap({ data: externalData }: { data?: any[] }) {
   const [activeRec, setActiveRec] = useState(0);
 
-  const recommendations = [
+  const defaultRecommendations = [
     { 
       title: "Hook", 
       theme: "rose" as const, 
@@ -102,6 +102,8 @@ export function OptimizationRoadmap() {
       ]
     }
   ];
+
+  const recommendations = externalData || defaultRecommendations;
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto w-full">
@@ -137,9 +139,9 @@ export function OptimizationRoadmap() {
           transition={{ duration: 0.4, ease: "easeInOut" }}
         >
           <RecommendationCard 
-            title={recommendations[activeRec].title}
-            theme={recommendations[activeRec].theme}
-            points={recommendations[activeRec].points}
+            title={recommendations[activeRec]?.title || "Recommendation"}
+            theme={(recommendations[activeRec]?.theme as any) || "blue"}
+            points={recommendations[activeRec]?.points || []}
             delay={0.2}
           />
         </motion.div>
