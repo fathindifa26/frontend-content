@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Zap, Layout, Video, ChevronRight, RefreshCw, Loader2 } from "lucide-react";
+import { Zap, Layout, Video, ChevronRight, RefreshCw, Loader2, ArrowLeft } from "lucide-react";
 import { OptimizationRoadmap } from "./OptimizationRoadmap";
 import { NewBriefRecommendation } from "./NewBriefRecommendation";
 
@@ -369,7 +369,7 @@ export function AnalysisResults({
               animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: -20, filter: "blur(10px)" }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="space-y-12"
+              className="relative pr-12"
             >
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {results.map((res: any, i: number) => (
@@ -386,17 +386,14 @@ export function AnalysisResults({
                 ))}
               </div>
               
-              <div className="flex justify-center pt-12">
+              {/* Floating Next Button */}
+              <div className="absolute right-[-80px] top-1/2 -translate-y-1/2 flex flex-col items-center">
                 <button 
                   onClick={() => setActiveSection("roadmap")}
-                  className="glass-panel px-10 py-5 rounded-[24px] border-white/10 hover:bg-white/5 transition-all group flex items-center space-x-4"
+                  className="group flex flex-col items-center"
                 >
-                  <div className="flex flex-col items-start">
-                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Next Step</span>
-                    <span className="text-lg font-black text-white tracking-tight">Optimization Roadmap</span>
-                  </div>
-                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
-                    <ChevronRight size={20} className="text-primary" />
+                  <div className="w-16 h-24 rounded-full glass-panel border-white/10 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/50 transition-all shadow-2xl group-hover:shadow-primary/20">
+                    <ChevronRight size={32} className="text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </div>
                 </button>
               </div>
@@ -410,21 +407,30 @@ export function AnalysisResults({
               animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: -20, filter: "blur(10px)" }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="space-y-12"
+              className="relative px-12"
             >
+              {/* Floating Back Button */}
+              <div className="absolute left-[-20px] top-1/2 -translate-y-1/2 flex flex-col items-center">
+                <button 
+                  onClick={() => setActiveSection("results")}
+                  className="group flex flex-col items-center"
+                >
+                  <div className="w-16 h-24 rounded-full glass-panel border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-all shadow-2xl">
+                    <ArrowLeft size={32} className="text-white/20 group-hover:text-white group-hover:-translate-x-1 transition-all" />
+                  </div>
+                </button>
+              </div>
+
               <OptimizationRoadmap data={externalRoadmap} selectedIds={selectedIds} onToggleContext={toggleContext} onDataUpdate={onDataUpdate} />
               
-              <div className="flex justify-center pt-12">
+              {/* Floating Next Button */}
+              <div className="absolute right-[-80px] top-1/2 -translate-y-1/2 flex flex-col items-center">
                 <button 
                   onClick={() => setActiveSection("brief")}
-                  className="glass-panel px-10 py-5 rounded-[24px] border-white/10 hover:bg-white/5 transition-all group flex items-center space-x-4"
+                  className="group flex flex-col items-center"
                 >
-                  <div className="flex flex-col items-start">
-                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Next Step</span>
-                    <span className="text-lg font-black text-white tracking-tight">New Brief Strategy</span>
-                  </div>
-                  <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
-                    <ChevronRight size={20} className="text-indigo-400" />
+                  <div className="w-16 h-24 rounded-full glass-panel border-white/10 flex items-center justify-center group-hover:bg-indigo-500/10 group-hover:border-indigo-500/50 transition-all shadow-2xl group-hover:shadow-indigo-500/20">
+                    <ChevronRight size={32} className="text-white/20 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
                   </div>
                 </button>
               </div>
@@ -438,7 +444,20 @@ export function AnalysisResults({
               animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: -20, filter: "blur(10px)" }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="relative pl-12"
             >
+              {/* Floating Back Button */}
+              <div className="absolute left-[-20px] top-1/2 -translate-y-1/2 flex flex-col items-center">
+                <button 
+                  onClick={() => setActiveSection("roadmap")}
+                  className="group flex flex-col items-center"
+                >
+                  <div className="w-16 h-24 rounded-full glass-panel border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-all shadow-2xl">
+                    <ArrowLeft size={32} className="text-white/20 group-hover:text-white group-hover:-translate-x-1 transition-all" />
+                  </div>
+                </button>
+              </div>
+
               <NewBriefRecommendation 
                 analysisResults={results} 
                 persistedBriefs={generatedBriefs}
