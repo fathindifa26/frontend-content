@@ -88,7 +88,12 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ y: -500, opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
+            exit={{ 
+              opacity: 0, 
+              scale: 0.95, 
+              filter: "blur(20px)",
+              transition: { duration: 1.2, ease: "easeInOut" } 
+            }}
             className="fixed top-24 left-72 z-50 flex flex-col"
           >
             <SatisfyingStartButton 
