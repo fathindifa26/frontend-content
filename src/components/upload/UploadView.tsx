@@ -5,6 +5,8 @@ import { BenchmarkConfig } from "./BenchmarkConfig";
 import { SatisfyingStartButton } from "./SatisfyingStartButton";
 import { ProcessingLogs } from "./ProcessingLogs";
 
+import { AnalysisResults } from "../analysis/AnalysisResults";
+
 interface UploadViewProps {
   onUpload: (file: File) => void;
   onUrlSubmit: (url: string) => void;
@@ -110,25 +112,9 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
         )}
       </AnimatePresence>
 
-      {/* Results View (3 Empty Cards) */}
+      {/* Results View */}
       <AnimatePresence>
-        {showResults && (
-          <motion.div 
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={springConfig}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12"
-          >
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="glass-panel h-64 rounded-[32px] border-white/5 bg-white/[0.02] flex items-center justify-center">
-                <div className="text-center space-y-2">
-                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 mx-auto animate-pulse" />
-                  <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest">Card {i}</p>
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        )}
+        {showResults && <AnalysisResults />}
       </AnimatePresence>
 
       {!isProcessing && !showResults && (
