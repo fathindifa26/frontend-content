@@ -236,6 +236,17 @@ TONE: Energetic, Professional, Insightful.`;
 
     setGeneratedPrompts(prev => ({ ...prev, [index]: prompt }));
     setLoadingPrompts(prev => ({ ...prev, [index]: false }));
+
+    // Persist to production.json on backend
+    try {
+      await fetch("http://localhost:8000/api/analysis/save-prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: brief.title, prompt: prompt })
+      });
+    } catch (error) {
+      console.error("Failed to persist prompt:", error);
+    }
   };
 
   const next = () => setCurrent((c) => (c + 1) % persistedBriefs.length);
