@@ -95,10 +95,10 @@ function BriefCard({ index, total, title, hook, story }: { key?: any; index: num
   );
 }
 
-export function NewBriefRecommendation() {
+export function NewBriefRecommendation({ data: externalData }: { data?: any[] }) {
   const [current, setCurrent] = useState(0);
 
-  const briefs = [
+  const defaultBriefs = [
     {
       title: "The Silent Transformation",
       hook: "Stop scrolling if you're still doing your skincare like it's 2015.",
@@ -116,8 +116,12 @@ export function NewBriefRecommendation() {
     }
   ];
 
+  const briefs = externalData || defaultBriefs;
+
   const next = () => setCurrent((c) => (c + 1) % briefs.length);
   const prev = () => setCurrent((c) => (c - 1 + briefs.length) % briefs.length);
+
+  if (briefs.length === 0) return null;
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto w-full pt-12">
@@ -148,9 +152,9 @@ export function NewBriefRecommendation() {
           key={current}
           index={current}
           total={briefs.length}
-          title={briefs[current].title}
-          hook={briefs[current].hook}
-          story={briefs[current].story}
+          title={briefs[current]?.title || "New Brief"}
+          hook={briefs[current]?.hook || "Powerful Hook"}
+          story={briefs[current]?.story || "Detailed storyline..."}
         />
       </AnimatePresence>
 

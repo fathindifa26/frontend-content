@@ -101,7 +101,7 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
   );
 }
 
-export function AnalysisResults({ results: externalResults, roadmap: externalRoadmap }: { results?: any[], roadmap?: any[] }) {
+export function AnalysisResults({ results: externalResults, roadmap: externalRoadmap, briefs: externalBriefs }: { results?: any[], roadmap?: any[], briefs?: any[] }) {
   const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
   const [isViewAll, setIsViewAll] = useState(false);
 
@@ -185,7 +185,7 @@ export function AnalysisResults({ results: externalResults, roadmap: externalRoa
           ))}
         </div>
         <OptimizationRoadmap data={externalRoadmap} />
-        <NewBriefRecommendation />
+        <NewBriefRecommendation data={externalBriefs} />
       </div>
     );
   }
@@ -316,7 +316,7 @@ export function AnalysisResults({ results: externalResults, roadmap: externalRoa
               exit={{ opacity: 0, x: -20, filter: "blur(10px)" }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
-              <NewBriefRecommendation />
+              <NewBriefRecommendation data={externalBriefs} />
             </motion.div>
           )}
         </AnimatePresence>
