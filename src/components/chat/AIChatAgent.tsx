@@ -78,18 +78,20 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
         onClick={() => !isExpanded && setIsExpanded(true)}
       >
         {/* Animated Outer Glow (Same as Start Button) */}
-        <div className={`absolute -inset-1 bg-gradient-to-r from-rose-500 via-amber-400 to-primary rounded-[32px] blur-xl opacity-20 group-hover:opacity-50 transition-all duration-1000 ${
-          isExpanded ? "opacity-40" : ""
+        <div className={`absolute -inset-1 bg-gradient-to-r from-rose-500 via-amber-400 to-primary rounded-[32px] blur-xl opacity-20 group-hover:opacity-40 transition-all duration-1000 ${
+          isExpanded ? "opacity-10 group-hover:opacity-10" : ""
         }`} />
         
         {/* The Rotating AI Gradient Border (Same as Start Button) */}
         <div className="absolute -inset-[1.5px] overflow-hidden rounded-[31px]">
-          <div className="absolute inset-[-200%] animate-[spin_4s_linear_infinite] opacity-100 bg-[conic-gradient(from_0deg,transparent_20%,#f43f5e_30%,#fbbf24_45%,#4f46e5_60%,transparent_70%)]" />
+          <div className={`absolute inset-[-200%] opacity-100 bg-[conic-gradient(from_0deg,transparent_20%,#f43f5e_30%,#fbbf24_45%,#4f46e5_60%,transparent_70%)] ${
+            isExpanded ? "animate-none rotate-45 opacity-20" : "animate-[spin_4s_linear_infinite]"
+          }`} />
         </div>
 
         {/* Main Bar Body */}
         <div className={`relative h-full w-full backdrop-blur-3xl border border-white/10 rounded-[30px] flex items-center px-6 transition-all duration-500 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] ${
-          isExpanded ? "bg-white/10 border-white/20" : "bg-white/5 hover:bg-white/10 cursor-pointer"
+          isExpanded ? "bg-white/[0.08] border-white/20" : "bg-white/5 hover:bg-white/10 cursor-pointer"
         }`}>
           <div className="flex-1 overflow-hidden flex items-center">
             <AnimatePresence mode="wait">
@@ -112,11 +114,11 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
                   key="collapsed-text"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="w-full flex items-center justify-center space-x-2"
+                  className="w-full flex items-center space-x-3"
                 >
-                  <Sparkles size={14} className="text-amber-400" />
-                  <span className="text-[13px] text-white/40 font-bold tracking-tight">
-                    Ask AI Anything
+                  <Sparkles size={16} className="text-amber-400/60" />
+                  <span className="text-[15px] text-white/50 font-medium tracking-tight">
+                    Ask AI Anything...
                   </span>
                 </motion.div>
               )}
