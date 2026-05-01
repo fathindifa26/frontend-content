@@ -148,7 +148,7 @@ export function UploadView({
               filter: "blur(20px)",
               transition: { duration: 1.2, ease: "easeInOut" } 
             }}
-            className="fixed top-24 left-72 z-50 flex flex-col"
+            className="fixed top-24 left-28 z-50 flex flex-col"
           >
             <SatisfyingStartButton 
               isProcessing={!isFinished} 
