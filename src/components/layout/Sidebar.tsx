@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { CloudUpload, LayoutDashboard, Video, ChevronRight } from "lucide-react";
+import { CloudUpload, Video, ChevronRight } from "lucide-react";
 
 interface SidebarItemProps {
   icon: any;
@@ -53,8 +53,8 @@ function SidebarItem({ icon: Icon, label, active = false, onClick, isExpanded, h
 }
 
 interface SidebarProps {
-  activeTab: "dashboard" | "upload";
-  setActiveTab: (tab: "dashboard" | "upload") => void;
+  activeTab: "upload";
+  setActiveTab: (tab: "upload") => void;
   activeHighlights?: string[];
 }
 
@@ -100,13 +100,6 @@ export function Sidebar({ activeTab, setActiveTab, activeHighlights = [] }: Side
             onClick={() => setActiveTab("upload")}
             isExpanded={isHovered}
             hasNotification={hasUploadNotification}
-          />
-          <SidebarItem 
-            icon={LayoutDashboard} 
-            label="Dashboard" 
-            active={activeTab === "dashboard"} 
-            onClick={() => setActiveTab("dashboard")}
-            isExpanded={isHovered}
           />
         </nav>
       </div>

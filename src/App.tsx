@@ -3,12 +3,11 @@ import { motion, AnimatePresence } from "motion/react";
 import { Sidebar } from "./components/layout/Sidebar";
 import { Header } from "./components/layout/Header";
 import { UploadView } from "./components/upload/UploadView";
-import { DashboardView } from "./components/dashboard/DashboardView";
 import { AIChatAgent } from "./components/chat/AIChatAgent";
 import { API_BASE_URL } from "./config";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<"dashboard" | "upload">("upload");
+  const [activeTab, setActiveTab] = useState<"upload">("upload");
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   
@@ -147,7 +146,6 @@ export default function App() {
         <Header activeTab={activeTab} />
 
         <main className="px-10 pb-10 max-w-[1600px] w-full">
-          {activeTab === "upload" ? (
             <UploadView 
               onUpload={handleUpload} 
               onUrlSubmit={handleUrlSubmit}
@@ -166,12 +164,6 @@ export default function App() {
               showResults={showResults}
               setShowResults={setShowResults}
             />
-          ) : (
-            <DashboardView 
-              data={analysisResult}
-              onRegenerate={handleRegenerate}
-            />
-          )}
         </main>
       </div>
 

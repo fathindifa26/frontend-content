@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 
 interface HeaderProps {
-  activeTab: "dashboard" | "upload";
+  activeTab: "upload";
 }
 
 export function Header({ activeTab }: HeaderProps) {
@@ -9,10 +9,10 @@ export function Header({ activeTab }: HeaderProps) {
     <header className="h-20 flex items-center justify-between px-10">
       <div>
         <h2 className="text-2xl font-semibold text-white">
-          {activeTab === "upload" ? "Video Intelligence" : "Dashboard Overview"}
+          Video Intelligence
         </h2>
         <p className="text-sm text-on-surface-variant">
-          {activeTab === "upload" ? "Analyze and optimize your video content." : "Your account and project summary."}
+          Analyze and optimize your video content.
         </p>
       </div>
 
