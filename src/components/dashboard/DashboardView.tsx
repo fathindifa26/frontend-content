@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { LayoutDashboard } from "lucide-react";
-import { BenchmarkCard } from "../upload/BenchmarkCard";
-import { MetricsGrid } from "../upload/MetricsGrid";
-import { AISummarySection } from "../upload/AISummarySection";
+import { BenchmarkCard } from "./BenchmarkCard";
+import { MetricsGrid } from "./MetricsGrid";
+import { AISummarySection } from "./AISummarySection";
 
 interface DashboardViewProps {
   data: any;

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Sidebar } from "./components/layout/Sidebar";
 import { Header } from "./components/layout/Header";
-import { UploadView } from "./components/views/UploadView";
-import { DashboardView } from "./components/views/DashboardView";
+import { UploadView } from "./components/upload/UploadView";
+import { DashboardView } from "./components/dashboard/DashboardView";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "upload">("upload");

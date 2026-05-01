@@ -1,4 +1,4 @@
-import { UploadHeader } from "../upload/UploadHeader";
+import { UploadHeader } from "./UploadHeader";
 
 interface UploadViewProps {
   onUpload: (file: File) => void;
