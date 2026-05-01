@@ -33,10 +33,12 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
     ]);
   };
 
+  const [analysisData, setAnalysisData] = useState<any[] | null>(null);
+
   useEffect(() => {
     if (!isProcessing || isFinished) return;
 
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       if (logs.length === 1) {
         setLogs([
           { id: "1", message: "Video downloaded.", status: "completed" },
@@ -49,6 +51,17 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
           { id: "3", message: "Finalizing results...", status: "current" }
         ]);
       } else if (logs.length === 3) {
+        // Fetch real data from backend
+        try {
+          const response = await fetch("http://localhost:8000/api/analysis/latest");
+          const data = await response.json();
+          if (data.results) {
+            setAnalysisData(data.results);
+          }
+        } catch (error) {
+          console.error("Failed to fetch analysis data:", error);
+        }
+
         setLogs(prev => prev.map((l, i) => i === 2 ? { ...l, status: "completed" as const } : l));
         setIsFinished(true);
         
@@ -114,7 +127,7 @@ export function UploadView({ onUpload, onUrlSubmit, isAnalyzing }: UploadViewPro
 
       {/* Results View */}
       <AnimatePresence>
-        {showResults && <AnalysisResults />}
+        {showResults && <AnalysisResults results={analysisData || undefined} />}
       </AnimatePresence>
 
       {!isProcessing && !showResults && (

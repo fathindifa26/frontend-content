@@ -101,7 +101,7 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
   );
 }
 
-export function AnalysisResults() {
+export function AnalysisResults({ results: externalResults }: { results?: any[] }) {
   const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
   const [isViewAll, setIsViewAll] = useState(false);
 
@@ -113,7 +113,7 @@ export function AnalysisResults() {
     setIsViewAll(false);
   };
 
-  const dummyResults = [
+  const defaultResults = [
     {
       title: "Hook",
       icon: Zap,
@@ -150,6 +150,16 @@ export function AnalysisResults() {
     }
   ];
 
+  // Map icons and themes to external results if they exist
+  const results = externalResults ? externalResults.map(res => {
+    const defaultMatch = defaultResults.find(d => d.title === res.title) || defaultResults[0];
+    return {
+      ...res,
+      icon: defaultMatch.icon,
+      theme: defaultMatch.theme
+    };
+  }) : defaultResults;
+
   const sections = [
     { id: "results", label: "Analysis Results" },
     { id: "roadmap", label: "Optimization Roadmap" },
@@ -170,7 +180,7 @@ export function AnalysisResults() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {dummyResults.map((res) => (
+          {results.map((res: any) => (
             <ResultCard key={res.title} {...res} delay={0.1} />
           ))}
         </div>
@@ -244,7 +254,7 @@ export function AnalysisResults() {
               className="space-y-12"
             >
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {dummyResults.map((res, i) => (
+                {results.map((res: any, i: number) => (
                   <ResultCard 
                     key={res.title}
                     {...res}
