@@ -15,6 +15,8 @@ interface UploadViewProps {
   setAnalysisData: (data: any[] | null) => void;
   roadmapData: any[] | null;
   setRoadmapData: (data: any[] | null) => void;
+  briefsData: any[] | null;
+  setBriefsData: (data: any[] | null) => void;
   activeHighlights?: string[];
   removeHighlight?: (component: string) => void;
   selectedContexts?: { id: string, type: string, target: string, text?: string }[];
@@ -36,6 +38,8 @@ export function UploadView({
   setAnalysisData,
   roadmapData,
   setRoadmapData,
+  briefsData,
+  setBriefsData,
   activeHighlights,
   removeHighlight,
   selectedContexts,
@@ -78,6 +82,9 @@ export function UploadView({
           }
           if (data.roadmap) {
             setRoadmapData(data.roadmap);
+          }
+          if (data.briefs) {
+            setBriefsData(data.briefs);
           }
         } catch (error) {
           console.error("Failed to fetch analysis data:", error);
@@ -174,6 +181,8 @@ export function UploadView({
           <AnalysisResults 
             results={analysisData || undefined} 
             roadmap={roadmapData || undefined} 
+            persistedBriefs={briefsData || []}
+            setPersistedBriefs={setBriefsData}
             activeHighlights={activeHighlights}
             removeHighlight={removeHighlight}
             selectedContexts={selectedContexts}

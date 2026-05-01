@@ -14,6 +14,7 @@ export default function App() {
   // Real-time data states for Agent
   const [analysisData, setAnalysisData] = useState<any[] | null>(null);
   const [roadmapData, setRoadmapData] = useState<any[] | null>(null);
+  const [briefsData, setBriefsData] = useState<any[] | null>(null);
   const [activeHighlights, setActiveHighlights] = useState<string[]>([]);
   const [selectedContexts, setSelectedContexts] = useState<{ id: string, type: string, target: string, text?: string, index?: number }[]>([]);
 
@@ -44,6 +45,7 @@ export default function App() {
       const data = await response.json();
       if (data.results) setAnalysisData(data.results);
       if (data.roadmap) setRoadmapData(data.roadmap);
+      if (data.briefs) setBriefsData(data.briefs);
     } catch (error) {
       console.error("Failed to refresh data:", error);
     }
@@ -145,6 +147,8 @@ export default function App() {
               setAnalysisData={setAnalysisData}
               roadmapData={roadmapData}
               setRoadmapData={setRoadmapData}
+              briefsData={briefsData}
+              setBriefsData={setBriefsData}
               activeHighlights={activeHighlights}
               removeHighlight={removeHighlight}
               selectedContexts={selectedContexts}

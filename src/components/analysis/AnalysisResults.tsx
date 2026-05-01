@@ -139,20 +139,25 @@ export function AnalysisResults({
   activeHighlights = [],
   removeHighlight,
   selectedContexts = [],
-  toggleContext
+  toggleContext,
+  persistedBriefs: externalBriefs = [],
+  setPersistedBriefs
 }: { 
   results?: any[], 
   roadmap?: any[],
   activeHighlights?: string[],
   removeHighlight?: (component: string) => void,
   selectedContexts?: { id: string, type: string, target: string, text?: string, index?: number }[],
-  toggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void
+  toggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void,
+  persistedBriefs?: any[],
+  setPersistedBriefs?: (briefs: any[]) => void
 }) {
   const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
   const [isViewAll, setIsViewAll] = useState(false);
   
   // Persisted state for New Briefs
-  const [generatedBriefs, setGeneratedBriefs] = useState<any[]>([]);
+  const generatedBriefs = externalBriefs;
+  const setGeneratedBriefs = setPersistedBriefs || (() => {});
   const [briefsView, setBriefsView] = useState<"selection" | "loading" | "result">("selection");
 
   const selectedIds = selectedContexts.map(c => c.id);
