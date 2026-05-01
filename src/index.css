@@ -45,6 +45,20 @@
   .dummy-badge {
     @apply px-1.5 py-0.5 bg-secondary/20 text-secondary text-[8px] font-black uppercase tracking-tighter rounded border border-secondary/30 ml-1.5 inline-block align-middle;
   }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
 }
 
 /* Custom Scrollbar */
