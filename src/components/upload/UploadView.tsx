@@ -105,7 +105,13 @@ export function UploadView({
             <motion.div
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
+              whileHover={{ 
+                scale: 1.005, 
+                boxShadow: "0 0 40px rgba(99, 102, 241, 0.12)",
+                borderColor: "rgba(255, 255, 255, 0.25)"
+              }}
               transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.2 }}
+              className="rounded-[48px] overflow-hidden border border-transparent transition-all duration-300"
             >
               <UploadHeader 
                 onUpload={onUpload} 
@@ -117,7 +123,13 @@ export function UploadView({
             <motion.div
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
+              whileHover={{ 
+                scale: 1.005, 
+                boxShadow: "0 0 40px rgba(99, 102, 241, 0.12)",
+                borderColor: "rgba(255, 255, 255, 0.25)"
+              }}
               transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.4 }}
+              className="rounded-[40px] overflow-hidden border border-transparent transition-all duration-300 max-w-lg mx-auto w-full"
             >
               <BenchmarkConfig />
             </motion.div>
