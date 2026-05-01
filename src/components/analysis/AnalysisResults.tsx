@@ -184,27 +184,50 @@ export function AnalysisResults() {
     <div className="flex flex-col pt-12 pb-48 min-h-[800px]">
       {/* Navigation Header */}
       <div className="flex items-center justify-between mb-12 px-4">
-        <div className="flex items-center space-x-2 bg-white/5 p-1 rounded-2xl border border-white/5">
-          {sections.map((s, i) => (
-            <button
-              key={s.id}
-              onClick={() => setActiveSection(s.id as any)}
-              className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                activeSection === s.id 
-                  ? "bg-primary text-white shadow-lg shadow-primary/20" 
-                  : "text-white/20 hover:text-white/40"
-              }`}
-            >
-              {i + 1}. {s.label}
-            </button>
-          ))}
+        <div className="relative flex items-center bg-white/[0.03] backdrop-blur-2xl p-1.5 rounded-[24px] border border-white/5 shadow-2xl">
+          {sections.map((s, i) => {
+            const isActive = activeSection === s.id;
+            return (
+              <button
+                key={s.id}
+                onClick={() => setActiveSection(s.id as any)}
+                className={`relative px-8 py-3 rounded-[18px] text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-500 z-10 ${
+                  isActive ? "text-white" : "text-white/30 hover:text-white/60"
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="active-nav-tab"
+                    className="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/10 rounded-[18px] shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  >
+                    <div className="absolute inset-0 bg-primary/20 blur-md rounded-[18px]" />
+                  </motion.div>
+                )}
+                <span className="relative z-20 flex items-center space-x-2">
+                  <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] border ${
+                    isActive ? "border-primary bg-primary/20 text-primary" : "border-white/10 text-white/20"
+                  }`}>
+                    {i + 1}
+                  </span>
+                  <span>{s.label}</span>
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <button 
           onClick={showAll}
-          className="text-[10px] font-bold text-white/10 hover:text-primary transition-colors uppercase tracking-widest"
+          className="group flex items-center space-x-3 px-6 py-3 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/5"
         >
-          View All
+          <div className="flex flex-col items-end">
+            <span className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] group-hover:text-primary transition-colors">Switch View</span>
+            <span className="text-[11px] font-bold text-white/40 group-hover:text-white transition-colors">Show Full Report</span>
+          </div>
+          <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-primary/20 transition-all">
+            <Layout size={14} className="text-white/20 group-hover:text-primary transition-colors" />
+          </div>
         </button>
       </div>
 
