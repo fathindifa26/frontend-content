@@ -43,7 +43,7 @@ export function UploadHeader({ onUpload, onUrlSubmit, isAnalyzing }: UploadHeade
             <h3 className="text-xl font-bold text-white tracking-tight">
               Analyzing<span className="text-primary animate-pulse">...</span>
             </h3>
-            <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.3em]">
+            <p className="text-[11px] font-medium text-white/30 tracking-tight">
               AI Analysis
             </p>
           </div>
@@ -97,7 +97,7 @@ export function UploadHeader({ onUpload, onUrlSubmit, isAnalyzing }: UploadHeade
             <p className="text-[11px] text-white/40 font-medium max-w-xs">Drop video file here or select to begin analysis</p>
           </div>
 
-          <div className="flex space-x-3 pt-2">
+          <div className="flex items-center justify-center space-x-3 pt-2">
             <input
               type="file"
               ref={fileInputRef}
@@ -107,17 +107,22 @@ export function UploadHeader({ onUpload, onUrlSubmit, isAnalyzing }: UploadHeade
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="px-6 py-2.5 bg-primary/90 text-white text-[11px] font-bold rounded-xl hover:bg-primary transition-all shadow-lg shadow-primary/20 flex items-center space-x-2"
+              className="group flex flex-col items-center space-y-2 p-4 bg-white/5 border border-white/10 rounded-3xl hover:bg-primary/20 hover:border-primary/50 transition-all duration-500 w-32"
             >
-              <Upload size={14} />
-              <span>Upload File</span>
+              <div className="p-2.5 bg-white/5 rounded-2xl group-hover:bg-primary/20 transition-colors">
+                <Upload size={20} className="text-white/40 group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-[11px] font-bold text-white/40 group-hover:text-white transition-colors">Upload File</span>
             </button>
+
             <button
               onClick={() => setShowUrlInput(true)}
-              className="px-6 py-2.5 bg-white/5 text-white/60 text-[11px] font-bold rounded-xl border border-white/5 hover:bg-white/10 hover:text-white transition-all flex items-center space-x-2"
+              className="group flex flex-col items-center space-y-2 p-4 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/20 transition-all duration-500 w-32"
             >
-              <LinkIcon size={14} />
-              <span>Via URL</span>
+              <div className="p-2.5 bg-white/5 rounded-2xl group-hover:bg-white/10 transition-colors">
+                <LinkIcon size={20} className="text-white/40 group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-[11px] font-bold text-white/40 group-hover:text-white transition-colors">Via URL</span>
             </button>
           </div>
         </div>
