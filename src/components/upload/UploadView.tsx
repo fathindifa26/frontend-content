@@ -17,6 +17,8 @@ interface UploadViewProps {
   setRoadmapData: (data: any[] | null) => void;
   activeHighlights?: string[];
   removeHighlight?: (component: string) => void;
+  selectedContexts?: { id: string, type: string, target: string, text?: string }[];
+  toggleContext?: (context: { type: string, target: string, text?: string }) => void;
 }
 
 type LogStatus = "pending" | "current" | "completed";
@@ -35,7 +37,9 @@ export function UploadView({
   roadmapData,
   setRoadmapData,
   activeHighlights,
-  removeHighlight
+  removeHighlight,
+  selectedContexts,
+  toggleContext
 }: UploadViewProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -172,6 +176,8 @@ export function UploadView({
             roadmap={roadmapData || undefined} 
             activeHighlights={activeHighlights}
             removeHighlight={removeHighlight}
+            selectedContexts={selectedContexts}
+            toggleContext={toggleContext}
           />
         )}
 

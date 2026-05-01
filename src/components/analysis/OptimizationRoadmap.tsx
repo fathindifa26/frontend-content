@@ -7,67 +7,112 @@ interface RecommendationCardProps {
   theme: "rose" | "blue" | "amber";
   points: string[];
   delay: number;
+  selectedIds?: string[];
+  onToggleContext?: (context: { type: string, target: string, text?: string }) => void;
 }
 
-function RecommendationCard({ title, theme, points, delay }: RecommendationCardProps) {
+function RecommendationCard({ title, theme, points, delay, selectedIds = [], onToggleContext }: RecommendationCardProps) {
+  const sectionId = `roadmap-${title}-`;
+  const isSectionSelected = selectedIds.includes(sectionId);
+
+  const themeStyles = {
+    rose: {
+      base: "bg-rose-500/5 border-rose-500/10",
+      selected: "border-rose-500 bg-rose-500/10 shadow-[0_0_30px_rgba(244,63,94,0.2)]",
+      accent: "text-rose-500",
+      accentMuted: "text-rose-500/60"
+    },
+    blue: {
+      base: "bg-primary/5 border-primary/10",
+      selected: "border-primary bg-primary/10 shadow-[0_0_30px_rgba(79,70,229,0.2)]",
+      accent: "text-primary",
+      accentMuted: "text-primary/60"
+    },
+    amber: {
+      base: "bg-amber-400/5 border-amber-400/10",
+      selected: "border-amber-400 bg-amber-400/10 shadow-[0_0_30px_rgba(251,191,36,0.2)]",
+      accent: "text-amber-400",
+      accentMuted: "text-amber-400/60"
+    }
+  };
+
+  const currentStyle = themeStyles[theme];
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className={`glass-panel p-10 rounded-[48px] border flex flex-col space-y-8 w-full min-h-[400px] relative overflow-hidden ${
-        theme === 'rose' 
-          ? 'bg-rose-500/5 border-rose-500/10' 
-          : theme === 'blue' 
-            ? 'bg-primary/5 border-primary/10' 
-            : 'bg-amber-400/5 border-amber-400/10'
+      animate={{ 
+        opacity: 1, 
+        scale: isSectionSelected ? 1.01 : 1,
+      }}
+      onClick={() => onToggleContext && onToggleContext({ type: 'roadmap', target: title })}
+      className={`glass-panel p-10 rounded-[48px] border flex flex-col space-y-8 w-full min-h-[400px] relative overflow-hidden cursor-pointer transition-all duration-500 ${
+        isSectionSelected ? currentStyle.selected : currentStyle.base
       }`}
     >
       {/* Background Decorative Sparkle */}
-      <div className={`absolute top-0 right-0 p-12 opacity-5 ${
-        theme === 'rose' ? 'text-rose-500' : theme === 'blue' ? 'text-primary' : 'text-amber-400'
-      }`}>
+      <div className={`absolute top-0 right-0 p-12 opacity-5 ${currentStyle.accent}`}>
         <Sparkles size={120} />
       </div>
 
       <div className="flex items-center space-x-4 relative z-10">
-        <div className={`p-4 rounded-3xl bg-white/5 border border-white/10 ${
-          theme === 'rose' ? 'text-rose-500' : theme === 'blue' ? 'text-primary' : 'text-amber-400'
-        }`}>
+        <div className={`p-4 rounded-3xl bg-white/5 border border-white/10 ${currentStyle.accent}`}>
           <Wand2 size={32} strokeWidth={1.5} />
         </div>
         <div>
-          <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
-            theme === 'rose' ? 'text-rose-500/60' : theme === 'blue' ? 'text-primary/60' : 'text-amber-400/60'
-          }`}> Roadmap for improvement</span>
+          <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ${currentStyle.accentMuted}`}> Roadmap for improvement</span>
           <h3 className="text-3xl font-black text-white tracking-tighter">{title} Optimization</h3>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-        {points.map((point, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: delay + (i * 0.1) }}
-            className="p-5 rounded-[24px] bg-white/[0.03] border border-white/5 flex items-start space-x-4 hover:bg-white/[0.06] transition-all group"
-          >
-            <div className={`w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors ${
-              theme === 'rose' ? 'text-rose-500' : theme === 'blue' ? 'text-primary' : 'text-amber-400'
-            }`}>
-              <Lightbulb size={16} />
-            </div>
-            <p className="text-[13px] text-white/70 font-medium leading-relaxed">
-              {point}
-            </p>
-          </motion.div>
-        ))}
+        {points.map((point, i) => {
+          const pointId = `roadmap_point-${title}-${point}`;
+          const isPointSelected = selectedIds.includes(pointId);
+
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: delay + (i * 0.1) }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleContext && onToggleContext({ type: 'roadmap_point', target: title, text: point });
+              }}
+              className={`p-5 rounded-[24px] border flex items-start space-x-4 transition-all group ${
+                isPointSelected 
+                  ? "bg-primary/20 border-primary shadow-[0_0_15px_rgba(79,70,229,0.2)]" 
+                  : "bg-white/[0.03] border-white/5 hover:bg-white/[0.06] hover:border-white/10"
+              }`}
+            >
+              <div className={`w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors ${
+                isPointSelected ? "text-white bg-primary" : currentStyle.accent
+              }`}>
+                <Lightbulb size={16} />
+              </div>
+              <p className={`text-[13px] font-medium leading-relaxed transition-colors ${
+                isPointSelected ? "text-white" : "text-white/70"
+              }`}>
+                {point}
+              </p>
+            </motion.div>
+          );
+        })}
       </div>
     </motion.div>
   );
 }
 
-export function OptimizationRoadmap({ data: externalData }: { data?: any[] }) {
+export function OptimizationRoadmap({ 
+  data: externalData,
+  selectedIds = [],
+  onToggleContext
+}: { 
+  data?: any[],
+  selectedIds?: string[],
+  onToggleContext?: (context: { type: string, target: string, text?: string }) => void
+}) {
   const [activeRec, setActiveRec] = useState(0);
 
   const defaultRecommendations = [
@@ -143,6 +188,8 @@ export function OptimizationRoadmap({ data: externalData }: { data?: any[] }) {
             theme={(recommendations[activeRec]?.theme as any) || "blue"}
             points={recommendations[activeRec]?.points || []}
             delay={0.2}
+            selectedIds={selectedIds}
+            onToggleContext={onToggleContext}
           />
         </motion.div>
       </AnimatePresence>

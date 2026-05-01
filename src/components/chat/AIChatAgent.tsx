@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Send, Sparkles, Loader2, X, Bot, User, ChevronUp, ChevronDown, Zap } from "lucide-react";
+import { Send, Sparkles, Loader2, X, Bot, ChevronUp, ChevronDown, Zap } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 
 interface Message {
@@ -13,9 +13,18 @@ interface Message {
 interface AIChatAgentProps {
   onDataUpdate?: () => void;
   setHighlight?: (component: string | null) => void;
+  selectedContexts?: { id: string, type: string, target: string, text?: string }[];
+  toggleContext?: (context: { type: string, target: string, text?: string }) => void;
+  clearContexts?: () => void;
 }
 
-export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
+export function AIChatAgent({ 
+  onDataUpdate, 
+  setHighlight,
+  selectedContexts = [],
+  toggleContext,
+  clearContexts
+}: AIChatAgentProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [historyHeight, setHistoryHeight] = useState(400);
@@ -38,12 +47,21 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
   }, [messages, showHistory]);
 
   const handleSend = async () => {
-    if (!input.trim() || isTyping) return;
+    if ((!input.trim() && selectedContexts.length === 0) || isTyping) return;
     
     const userText = input.trim();
+    
+    // Construct context string from all selected contexts
+    const contextString = selectedContexts.length > 0 
+      ? `[Contexts: ${selectedContexts.map(c => `${c.type} ${c.target}${c.text ? ` - "${c.text}"` : ''}`).join('; ')}] `
+      : '';
+
+    const userPrompt = `${contextString}${userText}`;
+    const displayMessage = userText || (selectedContexts.length > 0 ? `Analyze ${selectedContexts.length} selected items` : "");
+
     const newUserMsg: Message = {
       id: Date.now().toString(),
-      text: userText,
+      text: displayMessage,
       sender: "user",
       timestamp: new Date()
     };
@@ -52,6 +70,9 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
     setInput("");
     setIsTyping(true);
     setShowHistory(true);
+    
+    // Clear contexts after sending
+    clearContexts?.();
     
     try {
       const history = messages.filter(m => m.sender !== 'tool').map(m => ({
@@ -63,7 +84,7 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: userText,
+          message: userPrompt,
           history: history
         })
       });
@@ -88,9 +109,9 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
 
         const modifiedTool = data.tool_used.find((t: string) => t.includes('modify'));
         if (modifiedTool && setHighlight) {
-          if (userText.toLowerCase().includes('hook')) setHighlight('Hook');
-          else if (userText.toLowerCase().includes('content')) setHighlight('Content');
-          else if (userText.toLowerCase().includes('production')) setHighlight('Production');
+          if (userPrompt.toLowerCase().includes('hook')) setHighlight('Hook');
+          else if (userPrompt.toLowerCase().includes('content')) setHighlight('Content');
+          else if (userPrompt.toLowerCase().includes('production')) setHighlight('Production');
           
           setTimeout(() => setHighlight(null), 5000);
         }
@@ -98,7 +119,7 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
 
       const botMsg: Message = {
         id: (Date.now() + 1).toString(),
-        text: data.answer,
+        text: data.answer || data.response || "I couldn't generate a response.",
         sender: "bot",
         timestamp: new Date()
       };
@@ -113,7 +134,7 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
   };
 
   return (
-    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center">
+    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center pointer-events-none">
       {/* Conversation Window */}
       <AnimatePresence>
         {showHistory && (
@@ -128,7 +149,7 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
             }}
             exit={{ opacity: 0, y: 20, scale: 0.95, filter: "blur(10px)" }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="glass-panel w-[640px] mb-4 rounded-[32px] border border-white/10 flex flex-col overflow-hidden shadow-2xl origin-bottom"
+            className="glass-panel w-[640px] mb-4 rounded-[32px] border border-white/10 flex flex-col overflow-hidden shadow-2xl origin-bottom pointer-events-auto"
           >
             {/* Window Header */}
             <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
@@ -173,7 +194,7 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
                         <span className="text-[10px] font-bold text-success/60 uppercase tracking-widest">Agent Action</span>
                       </div>
                       <div className="px-4 py-2.5 bg-success/5 border border-success/20 rounded-[20px] rounded-tl-none backdrop-blur-md shadow-lg shadow-success/5">
-                        <span className="text-[12px] font-bold text-white/70 tracking-tight">
+                        <span className="text-[12px] font-bold text-white/70 tracking-tight lowercase">
                           {msg.text.replace('Executing Tool: ', '')}
                         </span>
                       </div>
@@ -183,7 +204,7 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
                       <div className={`p-4 rounded-[24px] text-[13.5px] font-medium leading-relaxed shadow-lg ${
                         msg.sender === 'user' 
                           ? 'bg-primary text-white rounded-tr-none' 
-                          : 'bg-white/5 text-white/80 border border-white/5 rounded-tl-none'
+                          : 'bg-white/5 text-white/80 border border-white/5 rounded-tl-none backdrop-blur-md'
                       }`}>
                         <div className="prose prose-invert prose-sm max-w-none">
                           <ReactMarkdown 
@@ -214,6 +235,44 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Multi-Context Badge Container */}
+      <div className="relative w-full flex justify-center h-0 pointer-events-none">
+        <div className="absolute bottom-4 flex items-center justify-center space-x-2 px-4 overflow-x-auto custom-scrollbar-hide max-w-[600px] pointer-events-auto">
+          <AnimatePresence>
+            {selectedContexts.map((ctx) => (
+              <motion.div
+                key={ctx.id}
+                initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="shrink-0 px-3 py-1.5 bg-indigo-500/20 backdrop-blur-xl border border-indigo-500/30 rounded-xl flex items-center space-x-2 shadow-2xl"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                <span className="text-[9px] font-black uppercase tracking-widest text-indigo-200">
+                  {ctx.target}
+                </span>
+                <button 
+                  onClick={() => toggleContext?.(ctx)}
+                  className="w-4 h-4 rounded-full bg-white/5 flex items-center justify-center hover:bg-rose-500/20 hover:text-rose-400 transition-all text-white/30"
+                >
+                  <X size={8} />
+                </button>
+              </motion.div>
+            ))}
+            {selectedContexts.length > 0 && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={clearContexts}
+                className="shrink-0 px-2 py-1 text-[8px] font-bold text-white/30 hover:text-rose-400 uppercase tracking-tighter transition-colors"
+              >
+                Clear All
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
 
       {/* Chat Bar Container */}
       <motion.div
@@ -256,7 +315,7 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                  placeholder="Ask AI Anything..."
+                  placeholder={selectedContexts.length > 0 ? `Ask about ${selectedContexts.length} items...` : "Ask AI Anything..."}
                   className="w-full bg-transparent border-none text-[14px] text-white placeholder:text-white/20 focus:outline-none"
                 />
               ) : (
@@ -299,7 +358,7 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
                     e.stopPropagation();
                     handleSend();
                   }}
-                  disabled={!input.trim() || isTyping}
+                  disabled={(!input.trim() && selectedContexts.length === 0) || isTyping}
                   className="p-2 text-white/40 hover:text-white transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center"
                 >
                   {isTyping ? (

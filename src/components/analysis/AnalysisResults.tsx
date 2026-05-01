@@ -19,28 +19,35 @@ interface ResultCardProps {
   delay: number;
   isHighlighted?: boolean;
   onClearHighlight?: () => void;
+  selectedIds?: string[];
+  onToggleContext?: (context: { type: string, target: string, text?: string }) => void;
 }
 
-function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighlighted, onClearHighlight }: ResultCardProps) {
+function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighlighted, onClearHighlight, selectedIds = [], onToggleContext }: ResultCardProps) {
   const themes = {
     rose: {
       base: "bg-rose-500/5 border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.1)] text-rose-500",
       hover: "hover:border-rose-500/40 hover:shadow-[0_0_40px_rgba(244,63,94,0.2)] hover:bg-rose-500/10",
-      glow: "ring-4 ring-rose-500/50 shadow-[0_0_60px_rgba(244,63,94,0.4)] bg-rose-500/20 border-rose-500/60 animate-pulse"
+      glow: "ring-4 ring-rose-500/50 shadow-[0_0_60px_rgba(244,63,94,0.4)] bg-rose-500/20 border-rose-500/60 animate-pulse",
+      selected: "border-rose-500 ring-2 ring-rose-500/30 shadow-[0_0_30px_rgba(244,63,94,0.3)]"
     },
     blue: {
       base: "bg-primary/5 border-primary/20 shadow-[0_0_20px_rgba(79,70,229,0.1)] text-primary",
       hover: "hover:border-primary/40 hover:shadow-[0_0_40px_rgba(79,70,229,0.2)] hover:bg-primary/10",
-      glow: "ring-4 ring-primary/50 shadow-[0_0_60px_rgba(79,70,229,0.4)] bg-primary/20 border-primary/60 animate-pulse"
+      glow: "ring-4 ring-primary/50 shadow-[0_0_60px_rgba(79,70,229,0.4)] bg-primary/20 border-primary/60 animate-pulse",
+      selected: "border-primary ring-2 ring-primary/30 shadow-[0_0_30px_rgba(79,70,229,0.3)]"
     },
     amber: {
       base: "bg-amber-400/5 border-amber-400/20 shadow-[0_0_20px_rgba(251,191,36,0.1)] text-amber-400",
       hover: "hover:border-amber-400/40 hover:shadow-[0_0_40px_rgba(251,191,36,0.2)] hover:bg-amber-400/10",
-      glow: "ring-4 ring-amber-400/50 shadow-[0_0_60px_rgba(251,191,36,0.4)] bg-amber-400/20 border-amber-400/60 animate-pulse"
+      glow: "ring-4 ring-amber-400/50 shadow-[0_0_60px_rgba(251,191,36,0.4)] bg-amber-400/20 border-amber-400/60 animate-pulse",
+      selected: "border-amber-400 ring-2 ring-amber-400/30 shadow-[0_0_30px_rgba(251,191,36,0.3)]"
     }
   };
 
   const currentTheme = themes[theme];
+  const cardId = `component-${title}-`;
+  const isSelected = selectedIds.includes(cardId);
 
   return (
     <motion.div
@@ -48,16 +55,17 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighligh
       animate={{ 
         opacity: 1, 
         y: 0,
-        scale: isHighlighted ? 1.02 : 1,
+        scale: isHighlighted ? 1.02 : isSelected ? 1.01 : 1,
       }}
       whileHover={{ 
         y: -5,
         transition: { type: "spring", stiffness: 400, damping: 25 }
       }}
+      onClick={() => onToggleContext && onToggleContext({ type: 'component', target: title })}
       onMouseEnter={() => isHighlighted && onClearHighlight && onClearHighlight()}
       transition={{ type: "spring", stiffness: 300, damping: 30, delay }}
-      className={`glass-panel p-8 rounded-[40px] flex flex-col space-y-8 cursor-default transition-all duration-700 border min-h-[550px] ${
-        isHighlighted ? currentTheme.glow : `${currentTheme.base} ${currentTheme.hover}`
+      className={`glass-panel p-8 rounded-[40px] flex flex-col space-y-8 cursor-pointer transition-all duration-700 border min-h-[550px] group/card ${
+        isHighlighted ? currentTheme.glow : isSelected ? currentTheme.selected : `${currentTheme.base} ${currentTheme.hover}`
       }`}
     >
       {/* Header Section */}
@@ -84,30 +92,42 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighligh
 
       {/* Points List */}
       <div className="flex flex-col space-y-4 flex-1 overflow-y-auto max-h-[500px] pr-1 custom-scrollbar">
-        {points.map((point, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: delay + (idx * 0.1) }}
-            className={`p-4 rounded-[20px] border glass-panel transition-all duration-300 ${
-              point.type === "strength" 
-                ? "bg-success/5 border-success/20 hover:bg-success/10" 
-                : "bg-rose-500/5 border-rose-500/20 hover:bg-rose-500/10"
-            }`}
-          >
-            <div className="flex items-start space-x-3">
-              <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
-                point.type === "strength" ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"
-              }`} />
-              <p className={`text-[14px] font-medium leading-relaxed ${
-                point.type === "strength" ? "text-success/90" : "text-rose-500/90"
-              }`}>
-                {point.text}
-              </p>
-            </div>
-          </motion.div>
-        ))}
+        {points.map((point, idx) => {
+          const pointId = `point-${title}-${point.text}`;
+          const isPointSelected = selectedIds.includes(pointId);
+          
+          return (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              whileHover={{ scale: 1.02, x: 5 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleContext && onToggleContext({ type: 'point', target: title, text: point.text });
+              }}
+              transition={{ delay: delay + (idx * 0.1) }}
+              className={`p-4 rounded-[20px] border glass-panel transition-all duration-300 cursor-pointer group/point ${
+                isPointSelected 
+                  ? "border-primary bg-primary/10 shadow-[0_0_15px_rgba(79,70,229,0.2)]" 
+                  : point.type === "strength" 
+                    ? "bg-success/5 border-success/20 hover:bg-success/10" 
+                    : "bg-rose-500/5 border-rose-500/20 hover:bg-rose-500/10"
+              }`}
+            >
+              <div className="flex items-start space-x-3">
+                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                  isPointSelected ? "bg-primary animate-pulse" : point.type === "strength" ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"
+                }`} />
+                <p className={`text-[14px] font-medium leading-relaxed ${
+                  isPointSelected ? "text-white" : point.type === "strength" ? "text-success/90 group-hover/point:text-success" : "text-rose-500/90 group-hover/point:text-rose-500"
+                }`}>
+                  {point.text}
+                </p>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
     </motion.div>
   );
@@ -117,12 +137,16 @@ export function AnalysisResults({
   results: externalResults, 
   roadmap: externalRoadmap,
   activeHighlights = [],
-  removeHighlight
+  removeHighlight,
+  selectedContexts = [],
+  toggleContext
 }: { 
   results?: any[], 
   roadmap?: any[],
   activeHighlights?: string[],
-  removeHighlight?: (component: string) => void
+  removeHighlight?: (component: string) => void,
+  selectedContexts?: { id: string, type: string, target: string, text?: string }[],
+  toggleContext?: (context: { type: string, target: string, text?: string }) => void
 }) {
   const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
   const [isViewAll, setIsViewAll] = useState(false);
@@ -130,6 +154,8 @@ export function AnalysisResults({
   // Persisted state for New Briefs
   const [generatedBriefs, setGeneratedBriefs] = useState<any[]>([]);
   const [briefsView, setBriefsView] = useState<"selection" | "loading" | "result">("selection");
+
+  const selectedIds = selectedContexts.map(c => c.id);
 
   const showAll = () => {
     setIsViewAll(true);
@@ -213,10 +239,12 @@ export function AnalysisResults({
               delay={0.1} 
               isHighlighted={activeHighlights.includes(res.title)}
               onClearHighlight={() => removeHighlight && removeHighlight(res.title)}
+              selectedIds={selectedIds}
+              onToggleContext={toggleContext}
             />
           ))}
         </div>
-        <OptimizationRoadmap data={externalRoadmap} />
+        <OptimizationRoadmap data={externalRoadmap} selectedIds={selectedIds} onToggleContext={toggleContext} />
         <NewBriefRecommendation 
           analysisResults={results} 
           persistedBriefs={generatedBriefs}
@@ -299,6 +327,8 @@ export function AnalysisResults({
                     delay={0.1 * (i + 1)} 
                     isHighlighted={activeHighlights.includes(res.title)}
                     onClearHighlight={() => removeHighlight && removeHighlight(res.title)}
+                    selectedIds={selectedIds}
+                    onToggleContext={toggleContext}
                   />
                 ))}
               </div>
@@ -329,7 +359,7 @@ export function AnalysisResults({
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className="space-y-12"
             >
-              <OptimizationRoadmap data={externalRoadmap} />
+              <OptimizationRoadmap data={externalRoadmap} selectedIds={selectedIds} onToggleContext={toggleContext} />
               
               <div className="flex justify-center pt-12">
                 <button 

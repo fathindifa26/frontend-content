@@ -15,6 +15,7 @@ export default function App() {
   const [analysisData, setAnalysisData] = useState<any[] | null>(null);
   const [roadmapData, setRoadmapData] = useState<any[] | null>(null);
   const [activeHighlights, setActiveHighlights] = useState<string[]>([]);
+  const [selectedContexts, setSelectedContexts] = useState<{ id: string, type: string, target: string, text?: string }[]>([]);
 
   const addHighlight = (component: string) => {
     setActiveHighlights(prev => prev.includes(component) ? prev : [...prev, component]);
@@ -23,6 +24,19 @@ export default function App() {
   const removeHighlight = (component: string) => {
     setActiveHighlights(prev => prev.filter(c => c !== component));
   };
+
+  const toggleContext = (context: { type: string, target: string, text?: string }) => {
+    const id = `${context.type}-${context.target}-${context.text || ''}`;
+    setSelectedContexts(prev => {
+      const exists = prev.find(c => c.id === id);
+      if (exists) {
+        return prev.filter(c => c.id !== id);
+      }
+      return [...prev, { ...context, id }];
+    });
+  };
+
+  const clearContexts = () => setSelectedContexts([]);
 
   const refreshData = async () => {
     try {
@@ -133,6 +147,8 @@ export default function App() {
               setRoadmapData={setRoadmapData}
               activeHighlights={activeHighlights}
               removeHighlight={removeHighlight}
+              selectedContexts={selectedContexts}
+              toggleContext={toggleContext}
             />
           ) : (
             <DashboardView 
@@ -153,6 +169,9 @@ export default function App() {
             <AIChatAgent 
               onDataUpdate={refreshData} 
               setHighlight={addHighlight}
+              selectedContexts={selectedContexts}
+              toggleContext={toggleContext}
+              clearContexts={clearContexts}
             />
           </motion.div>
         )}
