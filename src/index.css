@@ -17,6 +17,9 @@
 }
 
 @layer base {
+  html {
+    zoom: 1.1;
+  }
   body {
     @apply bg-background text-on-surface font-sans antialiased;
     margin: 0;
