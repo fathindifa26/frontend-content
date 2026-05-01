@@ -29,12 +29,12 @@ export function BenchmarkConfig() {
             transition={springConfig}
             className="space-y-6 max-w-lg"
           >
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex items-center justify-center space-x-2">
-                <h3 className="text-lg font-bold text-white uppercase tracking-[0.3em]">Benchmark Configuration</h3>
+                <h3 className="text-xl font-bold text-white tracking-tight">Benchmark Configuration</h3>
                 <Info size={16} className="text-white/20" />
               </div>
-              <p className="text-xs text-white/40 font-medium italic">
+              <p className="text-[11px] text-white/40 font-medium max-w-xs mx-auto">
                 Define the competitive set for market-aware insights. 
                 Select a mode to begin.
               </p>
@@ -48,7 +48,7 @@ export function BenchmarkConfig() {
                 <div className="p-2.5 bg-white/5 rounded-2xl group-hover:bg-primary/20 transition-colors">
                   <Users size={20} className="text-white/40 group-hover:text-primary transition-colors" />
                 </div>
-                <span className="text-[10px] font-bold text-white/40 tracking-wide group-hover:text-white">Usernames</span>
+                <span className="text-[11px] font-bold text-white/40 group-hover:text-white">Usernames</span>
               </button>
 
               <button 
@@ -58,15 +58,16 @@ export function BenchmarkConfig() {
                 <div className="p-2.5 bg-white/5 rounded-2xl group-hover:bg-amber-400/20 transition-colors">
                   <LinkIcon size={20} className="text-white/40 group-hover:text-amber-400 transition-colors" />
                 </div>
-                <span className="text-[10px] font-bold text-white/40 tracking-wide group-hover:text-white">Video URLs</span>
+                <span className="text-[11px] font-bold text-white/40 group-hover:text-white">Video URLs</span>
               </button>
             </div>
           </motion.div>
         ) : (
           <motion.div 
             key="active"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10, transition: { duration: 0.2 } }}
             className="h-full w-full flex flex-col"
           >
             {/* Top Bar with Mode Switcher */}
@@ -121,8 +122,8 @@ export function BenchmarkConfig() {
               className="flex-1 flex items-center justify-center border-2 border-dashed border-white/5 rounded-[32px] bg-white/[0.01]"
             >
               <div className="text-center space-y-2">
-                <p className="text-white/20 text-[10px] font-bold uppercase tracking-[0.2em]">Input Area</p>
-                <p className="text-white/40 text-xs italic">Section for entering {mode} will be here</p>
+                <p className="text-white/20 text-[11px] font-bold">Input Area</p>
+                <p className="text-white/40 text-[11px] font-medium italic">Section for entering {mode} will be here</p>
               </div>
             </motion.div>
           </motion.div>
