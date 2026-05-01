@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Zap, Layout, Video } from "lucide-react";
 import { OptimizationRoadmap } from "./OptimizationRoadmap";
+import { NewBriefRecommendation } from "./NewBriefRecommendation";
 
 interface Point {
   text: string;
@@ -156,6 +157,9 @@ export function AnalysisResults() {
 
       {/* Bottom Section: Carousel Recommendations */}
       <OptimizationRoadmap />
+
+      {/* New Brief Section */}
+      <NewBriefRecommendation />
     </div>
   );
 }
