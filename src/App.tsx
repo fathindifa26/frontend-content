@@ -101,6 +101,9 @@ export default function App() {
       <div className="mesh-bg" />
       
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      
+      {/* Sidebar Spacer - ensures content is aligned with the fixed mini-sidebar */}
+      <div className="w-20 shrink-0" />
 
       <div className="flex-1 flex flex-col min-w-0">
         <Header activeTab={activeTab} />
