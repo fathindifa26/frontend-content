@@ -11,7 +11,7 @@ interface SatisfyingStartButtonProps {
 
 export function SatisfyingStartButton({ isProcessing, isFinished, onClick, onStop }: SatisfyingStartButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const springConfig = { type: "spring", stiffness: 400, damping: 30, mass: 1 };
+  const springConfig = { type: "spring", stiffness: 400, damping: 30, mass: 1 } as const;
 
   return (
     <div 

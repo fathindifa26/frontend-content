@@ -70,78 +70,94 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
         layout
         initial={false}
         animate={{ 
-          width: isExpanded ? 600 : 220,
-          height: 52,
+          width: isExpanded ? 640 : 240,
+          height: 56,
         }}
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
-        className={`glass-panel rounded-full border border-white/10 shadow-2xl overflow-hidden flex items-center px-4 relative ${
-          isExpanded ? "bg-white/10" : "bg-white/5 hover:bg-white/10 cursor-pointer"
-        }`}
+        className="relative group pointer-events-auto"
         onClick={() => !isExpanded && setIsExpanded(true)}
       >
-        <div className="flex-1 overflow-hidden">
-          <AnimatePresence mode="wait">
-            {isExpanded ? (
-              <motion.input
-                key="expanded-input"
-                ref={inputRef}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Type your command..."
-                className="w-full bg-transparent border-none text-[13px] text-white placeholder:text-white/20 focus:outline-none py-2"
-              />
-            ) : (
-              <motion.span
-                key="collapsed-text"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-[12px] text-white/30 font-medium whitespace-nowrap block text-center"
+        {/* Animated Outer Glow (Same as Start Button) */}
+        <div className={`absolute -inset-1 bg-gradient-to-r from-rose-500 via-amber-400 to-primary rounded-[32px] blur-xl opacity-20 group-hover:opacity-50 transition-all duration-1000 ${
+          isExpanded ? "opacity-40" : ""
+        }`} />
+        
+        {/* The Rotating AI Gradient Border (Same as Start Button) */}
+        <div className="absolute -inset-[1.5px] overflow-hidden rounded-[31px]">
+          <div className="absolute inset-[-200%] animate-[spin_4s_linear_infinite] opacity-100 bg-[conic-gradient(from_0deg,transparent_20%,#f43f5e_30%,#fbbf24_45%,#4f46e5_60%,transparent_70%)]" />
+        </div>
+
+        {/* Main Bar Body */}
+        <div className={`relative h-full w-full backdrop-blur-3xl border border-white/10 rounded-[30px] flex items-center px-6 transition-all duration-500 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] ${
+          isExpanded ? "bg-white/10 border-white/20" : "bg-white/5 hover:bg-white/10 cursor-pointer"
+        }`}>
+          <div className="flex-1 overflow-hidden flex items-center">
+            <AnimatePresence mode="wait">
+              {isExpanded ? (
+                <motion.input
+                  key="expanded-input"
+                  ref={inputRef}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder="Ask AI Anything..."
+                  className="w-full bg-transparent border-none text-[14px] text-white placeholder:text-white/20 focus:outline-none"
+                />
+              ) : (
+                <motion.div
+                  key="collapsed-text"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="w-full flex items-center justify-center space-x-2"
+                >
+                  <Sparkles size={14} className="text-amber-400" />
+                  <span className="text-[13px] text-white/40 font-bold tracking-tight">
+                    Ask AI Anything
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div 
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                className="flex items-center ml-2 space-x-2"
               >
-                Ask AI Strategist...
-              </motion.span>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSend();
+                  }}
+                  disabled={!input.trim() || isTyping}
+                  className="p-2 text-white/40 hover:text-white transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center"
+                >
+                  {isTyping ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <Send size={18} className="hover:translate-x-0.5 hover:-translate-y-0.5 transition-transform" />
+                  )}
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsExpanded(false);
+                  }}
+                  className="p-1 text-white/10 hover:text-white/40 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
-
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div 
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              className="flex items-center space-x-2"
-            >
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSend();
-                }}
-                disabled={!input.trim() || isTyping}
-                className="p-2.5 glass-card rounded-full border border-white/10 text-white/60 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all active:scale-95 disabled:opacity-30 group"
-              >
-                {isTyping ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <Send size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                )}
-              </button>
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsExpanded(false);
-                }}
-                className="p-1 text-white/10 hover:text-white/40 transition-colors"
-              >
-                <X size={14} />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.div>
     </div>
   );
