@@ -3,6 +3,7 @@ import { Sidebar } from "./components/layout/Sidebar";
 import { Header } from "./components/layout/Header";
 import { UploadView } from "./components/upload/UploadView";
 import { DashboardView } from "./components/dashboard/DashboardView";
+import { AIChatAgent } from "./components/chat/AIChatAgent";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "upload">("upload");
@@ -103,6 +104,8 @@ export default function App() {
           )}
         </main>
       </div>
+
+      <AIChatAgent />
     </div>
   );
 }
