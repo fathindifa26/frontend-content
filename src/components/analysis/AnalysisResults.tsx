@@ -392,6 +392,8 @@ export function AnalysisResults({
                 setPersistedBriefs={setGeneratedBriefs}
                 persistedView={briefsView}
                 setPersistedView={setBriefsView}
+                selectedIds={selectedIds}
+                onToggleContext={toggleContext}
               />
             </motion.div>
           )}

@@ -11,7 +11,9 @@ function BriefCard({
   fullPrompt, 
   isGenerating, 
   onGenerate,
-  onRegenerate
+  onRegenerate,
+  selectedIds = [],
+  onToggleContext
 }: { 
   index: number; 
   total: number; 
@@ -22,10 +24,13 @@ function BriefCard({
   isGenerating?: boolean;
   onGenerate: () => void;
   onRegenerate?: () => void;
+  selectedIds?: string[];
+  onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void;
 }) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (fullPrompt) {
       navigator.clipboard.writeText(fullPrompt);
       setCopied(true);
@@ -33,12 +38,21 @@ function BriefCard({
     }
   };
 
+  const isCardSelected = selectedIds.includes(`brief-card-idx${index}-${title}`);
+  const isTitleSelected = selectedIds.includes(`brief-title-idx${index}-${title}`);
+  const isHookSelected = selectedIds.includes(`brief-hook-idx${index}-${title}`);
+  const isStorySelected = selectedIds.includes(`brief-story-idx${index}-${title}`);
+  const isPromptSelected = selectedIds.includes(`brief-prompt-idx${index}-${title}`);
+
   return (
     <div className="space-y-6">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass-panel p-10 rounded-[48px] border border-white/5 bg-white/[0.02] relative overflow-hidden flex flex-col space-y-8 min-h-[500px]"
+        onClick={() => onToggleContext?.({ type: 'brief', target: 'card', text: title, index })}
+        className={`glass-panel p-10 rounded-[48px] border transition-all duration-500 relative overflow-hidden flex flex-col space-y-8 min-h-[500px] cursor-pointer group/card ${
+          isCardSelected ? 'border-indigo-500/50 bg-indigo-500/[0.05] ring-1 ring-indigo-500/20' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.04]'
+        }`}
       >
         {/* Background Icon */}
         <div className="absolute -top-10 -right-10 opacity-[0.03] text-white">
@@ -46,7 +60,12 @@ function BriefCard({
         </div>
 
         <div className="flex items-center justify-between relative z-10">
-          <div className="flex items-center space-x-4">
+          <div 
+            onClick={(e) => { e.stopPropagation(); onToggleContext?.({ type: 'brief', target: 'title', text: title, index }); }}
+            className={`flex items-center space-x-4 p-2 rounded-2xl transition-all duration-300 ${
+              isTitleSelected ? 'bg-indigo-500/20 ring-1 ring-indigo-500/30' : 'hover:bg-white/5'
+            }`}
+          >
             <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
               <FileText size={28} />
             </div>
@@ -64,7 +83,12 @@ function BriefCard({
         </div>
 
         <div className="grid grid-cols-1 gap-8 relative z-10 flex-1">
-          <div className="space-y-3">
+          <div 
+            onClick={(e) => { e.stopPropagation(); onToggleContext?.({ type: 'brief', target: 'hook', text: hook, index }); }}
+            className={`space-y-3 p-4 rounded-3xl transition-all duration-300 ${
+              isHookSelected ? 'bg-rose-500/10 ring-1 ring-rose-500/30' : 'hover:bg-white/5'
+            }`}
+          >
             <div className="flex items-center space-x-2 text-rose-400/80">
               <Sparkles size={14} />
               <span className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">The Hook Strategy</span>
@@ -74,7 +98,12 @@ function BriefCard({
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div 
+            onClick={(e) => { e.stopPropagation(); onToggleContext?.({ type: 'brief', target: 'story', text: story, index }); }}
+            className={`space-y-4 p-4 rounded-3xl transition-all duration-300 ${
+              isStorySelected ? 'bg-indigo-500/10 ring-1 ring-indigo-500/30' : 'hover:bg-white/5'
+            }`}
+          >
             <div className="flex items-center space-x-2">
               <div className="h-px w-8 bg-indigo-500/30" />
               <span className="text-[10px] font-black text-indigo-400/50 uppercase tracking-widest">Full Storyline & Core Value</span>
@@ -86,7 +115,7 @@ function BriefCard({
 
           {!fullPrompt && (
             <div className="pt-10 mt-auto flex justify-center">
-              <div className="relative group">
+              <div className="relative group" onClick={(e) => e.stopPropagation()}>
                 <div className={`absolute -inset-1 bg-gradient-to-r from-rose-500 via-amber-400 to-primary rounded-[32px] blur-xl transition-all duration-1000 ${isGenerating ? 'opacity-40 animate-pulse' : 'opacity-20 group-hover:opacity-60'}`} />
                 <div className="absolute -inset-[1.5px] overflow-hidden rounded-[31px]">
                   <div className={`absolute inset-[-200%] opacity-100 bg-[conic-gradient(from_0deg,transparent_20%,#f43f5e_30%,#fbbf24_45%,#4f46e5_60%,transparent_70%)] ${isGenerating ? 'animate-[spin_1s_linear_infinite]' : 'animate-[spin_4s_linear_infinite]'}`} />
@@ -121,7 +150,10 @@ function BriefCard({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-panel p-8 rounded-[32px] border border-indigo-500/20 bg-indigo-500/[0.03] relative overflow-hidden space-y-6"
+            onClick={() => onToggleContext?.({ type: 'brief', target: 'prompt', text: title, index })}
+            className={`glass-panel p-8 rounded-[32px] border transition-all duration-500 relative overflow-hidden space-y-6 cursor-pointer ${
+              isPromptSelected ? 'border-indigo-500/50 bg-indigo-500/[0.08] ring-1 ring-indigo-500/30' : 'border-indigo-500/20 bg-indigo-500/[0.03] hover:bg-indigo-500/[0.05]'
+            }`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -130,7 +162,7 @@ function BriefCard({
                 </div>
                 <h4 className="text-lg font-bold text-white tracking-tight">Optimized AI Master Prompt</h4>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
                 <button 
                   onClick={onRegenerate}
                   disabled={isGenerating}
@@ -178,13 +210,17 @@ export function NewBriefRecommendation({
   persistedBriefs,
   setPersistedBriefs,
   persistedView,
-  setPersistedView
+  setPersistedView,
+  selectedIds = [],
+  onToggleContext
 }: { 
   analysisResults: any[],
   persistedBriefs: any[],
   setPersistedBriefs: (b: any[]) => void,
   persistedView: "selection" | "loading" | "result",
-  setPersistedView: (v: "selection" | "loading" | "result") => void
+  setPersistedView: (v: "selection" | "loading" | "result") => void,
+  selectedIds?: string[],
+  onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void
 }) {
   const [mode, setMode] = useState<"improve" | "new">("new");
   const [current, setCurrent] = useState(0);
@@ -369,6 +405,8 @@ TONE: Energetic, Professional, Insightful.`;
               isGenerating={loadingPrompts[current]}
               onGenerate={() => handleGenerateFullPrompt(current)}
               onRegenerate={() => handleGenerateFullPrompt(current)}
+              selectedIds={selectedIds}
+              onToggleContext={onToggleContext}
             />
 
             <div className="flex justify-center space-x-2">
