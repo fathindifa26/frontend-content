@@ -408,7 +408,7 @@ TONE: Energetic, Professional, Insightful.`;
               title={persistedBriefs[current]?.title}
               hook={persistedBriefs[current]?.hook}
               story={persistedBriefs[current]?.story}
-              fullPrompt={generatedPrompts[current]}
+              fullPrompt={persistedBriefs[current]?.full_prompt || generatedPrompts[current]}
               isGenerating={loadingPrompts[current]}
               onGenerate={() => handleGenerateFullPrompt(current)}
               onRegenerate={() => handleGenerateFullPrompt(current)}
