@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Send, Sparkles, Loader2, X, Bot, ChevronUp, ChevronDown, Zap } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
+import { API_BASE_URL } from "../../config";
 
 interface Message {
   id: string;
@@ -80,7 +81,7 @@ export function AIChatAgent({
         content: m.text
       }));
 
-      const response = await fetch("http://localhost:8000/api/agent/chat", {
+      const response = await fetch(`${API_BASE_URL}/api/agent/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

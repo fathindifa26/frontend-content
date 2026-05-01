@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Wand2, Lightbulb, Sparkles, RefreshCw, Loader2 } from "lucide-react";
+import { API_BASE_URL } from "../../config";
 
 interface RecommendationCardProps {
   title: string;
@@ -148,7 +149,7 @@ export function OptimizationRoadmap({
 
   const handleRegenerateRoadmap = async (component: string) => {
     try {
-      const response = await fetch("http://localhost:8000/api/roadmap/regenerate", {
+      const response = await fetch(`${API_BASE_URL}/api/roadmap/regenerate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ component })

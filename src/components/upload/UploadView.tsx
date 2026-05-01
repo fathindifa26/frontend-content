@@ -4,6 +4,7 @@ import { UploadHeader } from "./UploadHeader";
 import { BenchmarkConfig } from "./BenchmarkConfig";
 import { SatisfyingStartButton } from "./SatisfyingStartButton";
 import { ProcessingLogs } from "./ProcessingLogs";
+import { API_BASE_URL } from "../../config";
 
 import { AnalysisResults } from "../analysis/AnalysisResults";
 
@@ -80,7 +81,7 @@ export function UploadView({
       } else if (logs.length === 3) {
         // Fetch real data from backend - Trigger FRESH analysis
         try {
-          const response = await fetch("http://localhost:8000/api/analysis/generate");
+          const response = await fetch(`${API_BASE_URL}/api/analysis/generate`);
           const data = await response.json();
           if (data.results) {
             setAnalysisData(data.results);

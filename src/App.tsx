@@ -5,6 +5,7 @@ import { Header } from "./components/layout/Header";
 import { UploadView } from "./components/upload/UploadView";
 import { DashboardView } from "./components/dashboard/DashboardView";
 import { AIChatAgent } from "./components/chat/AIChatAgent";
+import { API_BASE_URL } from "./config";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "upload">("upload");
@@ -47,7 +48,7 @@ export default function App() {
 
   const refreshData = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/analysis/latest");
+      const response = await fetch(`${API_BASE_URL}/api/analysis/latest`);
       const data = await response.json();
       if (data.results) {
         setAnalysisData(data.results);
@@ -67,7 +68,7 @@ export default function App() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:8000/analyze", {
+      const response = await fetch(`${API_BASE_URL}/analyze`, {
         method: "POST",
         body: formData,
       });
@@ -89,7 +90,7 @@ export default function App() {
     setAnalysisResult(null);
 
     try {
-      const response = await fetch(`http://localhost:8000/analyze-url?url=${encodeURIComponent(url)}`, {
+      const response = await fetch(`${API_BASE_URL}/analyze-url?url=${encodeURIComponent(url)}`, {
         method: "POST",
       });
 
@@ -109,7 +110,7 @@ export default function App() {
     if (!analysisResult) return null;
     
     try {
-      const response = await fetch("http://localhost:8000/regenerate-summary", {
+      const response = await fetch(`${API_BASE_URL}/regenerate-summary`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

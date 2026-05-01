@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { PenTool, Sparkles, ChevronLeft, ChevronRight, FileText, Wand2, RefreshCw, PlusCircle, ArrowLeft, Loader2, Copy, CheckCircle2 } from "lucide-react";
+import { API_BASE_URL } from "../../config";
 
 function BriefCard({ 
   index, 
@@ -259,7 +260,7 @@ export function NewBriefRecommendation({
 
   const handleRegenerateBrief = async (index: number) => {
     try {
-      const response = await fetch("http://localhost:8000/api/analysis/regenerate-brief", {
+      const response = await fetch(`${API_BASE_URL}/api/analysis/regenerate-brief`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ index })
@@ -282,7 +283,7 @@ export function NewBriefRecommendation({
   const handleGenerate = async () => {
     setPersistedView("loading");
     try {
-      const response = await fetch("http://localhost:8000/api/analysis/brief", {
+      const response = await fetch(`${API_BASE_URL}/api/analysis/brief`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mode, results: analysisResults })
@@ -327,7 +328,7 @@ TONE: Energetic, Professional, Insightful.`;
 
     // Persist to production.json on backend
     try {
-      await fetch("http://localhost:8000/api/analysis/save-prompt", {
+      await fetch(`${API_BASE_URL}/api/analysis/save-prompt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: brief.title, prompt: prompt })

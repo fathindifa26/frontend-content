@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Zap, Layout, Video, ChevronRight, RefreshCw, Loader2, ArrowLeft } from "lucide-react";
+import { API_BASE_URL } from "../../config";
 import { OptimizationRoadmap } from "./OptimizationRoadmap";
 import { NewBriefRecommendation } from "./NewBriefRecommendation";
 
@@ -192,7 +193,7 @@ export function AnalysisResults({
 
   const handleRegenerateAnalysis = async (component: string) => {
     try {
-      const response = await fetch("http://localhost:8000/api/analysis/regenerate", {
+      const response = await fetch(`${API_BASE_URL}/api/analysis/regenerate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ component })
