@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { Sidebar } from "./components/layout/Sidebar";
 import { Header } from "./components/layout/Header";
 import { UploadView } from "./components/upload/UploadView";
@@ -129,10 +130,20 @@ export default function App() {
         </main>
       </div>
 
-      <AIChatAgent 
-        onDataUpdate={refreshData} 
-        setHighlight={setHighlightedComponent}
-      />
+      <AnimatePresence>
+        {analysisData && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+          >
+            <AIChatAgent 
+              onDataUpdate={refreshData} 
+              setHighlight={setHighlightedComponent}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
