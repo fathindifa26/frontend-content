@@ -22,7 +22,7 @@ export function SatisfyingStartButton() {
 
         {/* Button Content */}
         <button 
-          className="relative px-16 py-5 bg-background/80 backdrop-blur-2xl border border-white/10 rounded-[30px] flex items-center space-x-3 group-hover:bg-white/5 transition-all duration-500"
+          className="relative px-16 py-5 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[30px] flex items-center space-x-3 hover:bg-white/10 transition-all duration-500 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)]"
         >
           <div className="relative">
              <div className="absolute inset-0 bg-primary/20 blur-md rounded-full animate-pulse" />
