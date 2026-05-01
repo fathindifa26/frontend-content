@@ -102,13 +102,25 @@ export function UploadView({
             transition={springConfig}
             className="space-y-8"
           >
-            <UploadHeader 
-              onUpload={onUpload} 
-              onUrlSubmit={onUrlSubmit}
-              isAnalyzing={isAnalyzing} 
-            />
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.2 }}
+            >
+              <UploadHeader 
+                onUpload={onUpload} 
+                onUrlSubmit={onUrlSubmit}
+                isAnalyzing={isAnalyzing} 
+              />
+            </motion.div>
 
-            <BenchmarkConfig />
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.4 }}
+            >
+              <BenchmarkConfig />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -152,12 +164,17 @@ export function UploadView({
       </AnimatePresence>
 
       {!isProcessing && !showResults && (
-        <div className="mt-4 flex justify-center pb-12">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 400, damping: 15, delay: 0.6 }}
+          className="mt-4 flex justify-center pb-12"
+        >
           <SatisfyingStartButton 
             isProcessing={false} 
             onClick={handleStart} 
           />
-        </div>
+        </motion.div>
       )}
     </div>
   );
