@@ -15,7 +15,7 @@ export default function App() {
   const [analysisData, setAnalysisData] = useState<any[] | null>(null);
   const [roadmapData, setRoadmapData] = useState<any[] | null>(null);
   const [activeHighlights, setActiveHighlights] = useState<string[]>([]);
-  const [selectedContexts, setSelectedContexts] = useState<{ id: string, type: string, target: string, text?: string }[]>([]);
+  const [selectedContexts, setSelectedContexts] = useState<{ id: string, type: string, target: string, text?: string, index?: number }[]>([]);
 
   const addHighlight = (component: string) => {
     setActiveHighlights(prev => prev.includes(component) ? prev : [...prev, component]);
@@ -25,8 +25,8 @@ export default function App() {
     setActiveHighlights(prev => prev.filter(c => c !== component));
   };
 
-  const toggleContext = (context: { type: string, target: string, text?: string }) => {
-    const id = `${context.type}-${context.target}-${context.text || ''}`;
+  const toggleContext = (context: { type: string, target: string, text?: string, index?: number }) => {
+    const id = `${context.type}-${context.target}-${context.index !== undefined ? `idx${context.index}-` : ''}${context.text || ''}`;
     setSelectedContexts(prev => {
       const exists = prev.find(c => c.id === id);
       if (exists) {

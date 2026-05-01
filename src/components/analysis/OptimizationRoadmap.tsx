@@ -8,7 +8,7 @@ interface RecommendationCardProps {
   points: string[];
   delay: number;
   selectedIds?: string[];
-  onToggleContext?: (context: { type: string, target: string, text?: string }) => void;
+  onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void;
 }
 
 function RecommendationCard({ title, theme, points, delay, selectedIds = [], onToggleContext }: RecommendationCardProps) {
@@ -67,7 +67,7 @@ function RecommendationCard({ title, theme, points, delay, selectedIds = [], onT
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
         {points.map((point, i) => {
-          const pointId = `roadmap_point-${title}-${point}`;
+          const pointId = `roadmap_point-${title}-idx${i}-${point}`;
           const isPointSelected = selectedIds.includes(pointId);
 
           return (
@@ -78,7 +78,7 @@ function RecommendationCard({ title, theme, points, delay, selectedIds = [], onT
               transition={{ delay: delay + (i * 0.1) }}
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleContext && onToggleContext({ type: 'roadmap_point', target: title, text: point });
+                onToggleContext && onToggleContext({ type: 'roadmap_point', target: title, text: point, index: i });
               }}
               className={`p-5 rounded-[24px] border flex items-start space-x-4 transition-all group ${
                 isPointSelected 
@@ -111,7 +111,7 @@ export function OptimizationRoadmap({
 }: { 
   data?: any[],
   selectedIds?: string[],
-  onToggleContext?: (context: { type: string, target: string, text?: string }) => void
+  onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void
 }) {
   const [activeRec, setActiveRec] = useState(0);
 

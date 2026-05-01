@@ -13,8 +13,8 @@ interface Message {
 interface AIChatAgentProps {
   onDataUpdate?: () => void;
   setHighlight?: (component: string | null) => void;
-  selectedContexts?: { id: string, type: string, target: string, text?: string }[];
-  toggleContext?: (context: { type: string, target: string, text?: string }) => void;
+  selectedContexts?: { id: string, type: string, target: string, text?: string, index?: number }[];
+  toggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void;
   clearContexts?: () => void;
 }
 
@@ -51,9 +51,9 @@ export function AIChatAgent({
     
     const userText = input.trim();
     
-    // Construct context string from all selected contexts
+    // Construct context string from all selected contexts with indices
     const contextString = selectedContexts.length > 0 
-      ? `[Contexts: ${selectedContexts.map(c => `${c.type} ${c.target}${c.text ? ` - "${c.text}"` : ''}`).join('; ')}] `
+      ? `[Contexts: ${selectedContexts.map(c => `${c.type} ${c.target}${c.index !== undefined ? ` (idx: ${c.index})` : ''}${c.text ? ` - "${c.text}"` : ''}`).join('; ')}] `
       : '';
 
     const userPrompt = `${contextString}${userText}`;

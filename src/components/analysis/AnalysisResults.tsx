@@ -20,7 +20,7 @@ interface ResultCardProps {
   isHighlighted?: boolean;
   onClearHighlight?: () => void;
   selectedIds?: string[];
-  onToggleContext?: (context: { type: string, target: string, text?: string }) => void;
+  onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void;
 }
 
 function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighlighted, onClearHighlight, selectedIds = [], onToggleContext }: ResultCardProps) {
@@ -93,7 +93,7 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighligh
       {/* Points List */}
       <div className="flex flex-col space-y-4 flex-1 overflow-y-auto max-h-[500px] pr-1 custom-scrollbar">
         {points.map((point, idx) => {
-          const pointId = `point-${title}-${point.text}`;
+          const pointId = `point-${title}-idx${idx}-${point.text}`;
           const isPointSelected = selectedIds.includes(pointId);
           
           return (
@@ -104,7 +104,7 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighligh
               whileHover={{ scale: 1.02, x: 5 }}
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleContext && onToggleContext({ type: 'point', target: title, text: point.text });
+                onToggleContext && onToggleContext({ type: 'point', target: title, text: point.text, index: idx });
               }}
               transition={{ delay: delay + (idx * 0.1) }}
               className={`p-4 rounded-[20px] border glass-panel transition-all duration-300 cursor-pointer group/point ${
@@ -145,8 +145,8 @@ export function AnalysisResults({
   roadmap?: any[],
   activeHighlights?: string[],
   removeHighlight?: (component: string) => void,
-  selectedContexts?: { id: string, type: string, target: string, text?: string }[],
-  toggleContext?: (context: { type: string, target: string, text?: string }) => void
+  selectedContexts?: { id: string, type: string, target: string, text?: string, index?: number }[],
+  toggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void
 }) {
   const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
   const [isViewAll, setIsViewAll] = useState(false);
