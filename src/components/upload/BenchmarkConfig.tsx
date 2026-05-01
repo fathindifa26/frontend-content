@@ -11,10 +11,12 @@ export function BenchmarkConfig() {
     <motion.div 
       layout
       transition={springConfig}
-      className={`glass-panel p-8 rounded-[40px] mx-auto relative overflow-hidden transition-all duration-500 ${
+      className={`glass-panel p-8 rounded-[40px] mx-auto relative overflow-hidden transition-all duration-500 ease-in-out ${
         mode === "none" 
-          ? "w-full max-w-lg min-h-[200px] flex flex-col items-center justify-center text-center" 
-          : "w-full max-w-[1200px] min-h-[300px]"
+          ? "w-full max-w-lg min-h-[200px] flex flex-col items-center justify-center text-center border-white/5 bg-white/[0.02]" 
+          : mode === "usernames"
+            ? "w-full max-w-[1200px] min-h-[300px] bg-primary/5 border-primary/20 shadow-[0_0_20px_rgba(79,70,229,0.1)]"
+            : "w-full max-w-[1200px] min-h-[300px] bg-amber-400/5 border-amber-400/20 shadow-[0_0_20px_rgba(251,191,36,0.1)]"
       }`}
     >
       <AnimatePresence mode="wait">
@@ -75,8 +77,10 @@ export function BenchmarkConfig() {
                 className="flex items-center bg-white/5 p-1.5 rounded-2xl border border-white/5 relative"
               >
                 <div 
-                  className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-primary/20 border border-primary/30 rounded-xl transition-all duration-500 ease-out z-0 ${
-                    mode === "usernames" ? "left-1.5" : "left-[calc(50%+1.5px)]"
+                  className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] rounded-xl transition-all duration-500 ease-out z-0 ${
+                    mode === "usernames" 
+                      ? "left-1.5 bg-primary/20 border border-primary/30" 
+                      : "left-[calc(50%+1.5px)] bg-amber-400/20 border border-amber-400/30"
                   }`}
                 />
                 
