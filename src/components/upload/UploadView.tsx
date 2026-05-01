@@ -19,8 +19,9 @@ interface UploadViewProps {
   setBriefsData: (data: any[] | null) => void;
   activeHighlights?: string[];
   removeHighlight?: (component: string) => void;
-  selectedContexts?: { id: string, type: string, target: string, text?: string }[];
-  toggleContext?: (context: { type: string, target: string, text?: string }) => void;
+  selectedContexts?: { id: string, type: string, target: string, text?: string, index?: number }[];
+  toggleContext?: (context: { id?: string, type: string, target: string, text?: string, index?: number }) => void;
+  onDataUpdate?: () => void;
 }
 
 type LogStatus = "pending" | "current" | "completed";
@@ -43,7 +44,8 @@ export function UploadView({
   activeHighlights,
   removeHighlight,
   selectedContexts,
-  toggleContext
+  toggleContext,
+  onDataUpdate
 }: UploadViewProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -187,6 +189,7 @@ export function UploadView({
             removeHighlight={removeHighlight}
             selectedContexts={selectedContexts}
             toggleContext={toggleContext}
+            onDataUpdate={onDataUpdate}
           />
         )}
 

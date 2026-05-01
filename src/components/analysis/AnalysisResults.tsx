@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Zap, Layout, Video, ChevronRight } from "lucide-react";
+import { Zap, Layout, Video, ChevronRight, RefreshCw, Loader2 } from "lucide-react";
 import { OptimizationRoadmap } from "./OptimizationRoadmap";
 import { NewBriefRecommendation } from "./NewBriefRecommendation";
 
@@ -21,9 +21,23 @@ interface ResultCardProps {
   onClearHighlight?: () => void;
   selectedIds?: string[];
   onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void;
+  onRegenerate?: (component: string) => Promise<void>;
 }
 
-function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighlighted, onClearHighlight, selectedIds = [], onToggleContext }: ResultCardProps) {
+function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighlighted, onClearHighlight, selectedIds = [], onToggleContext, onRegenerate }: ResultCardProps) {
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  
+  const handleRegenerate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onRegenerate) return;
+    setIsRegenerating(true);
+    try {
+      await onRegenerate(title);
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
+
   const themes = {
     rose: {
       base: "bg-rose-500/5 border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.1)] text-rose-500",
@@ -80,10 +94,24 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay, isHighligh
           </div>
         </div>
         
-        <div className="flex flex-col items-end">
-          <span className={`text-3xl font-black italic tracking-tighter ${theme === 'rose' ? 'text-rose-500' : theme === 'blue' ? 'text-primary' : 'text-amber-400'}`}>
-            {(score * 10).toFixed(1)}
-          </span>
+        <div className="flex flex-col items-end space-y-2">
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={handleRegenerate}
+              disabled={isRegenerating}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/5 text-[10px] font-bold uppercase tracking-widest text-white/20 hover:text-white hover:bg-white/10 transition-all disabled:opacity-30"
+            >
+              {isRegenerating ? (
+                <Loader2 size={12} className="animate-spin" />
+              ) : (
+                <RefreshCw size={12} />
+              )}
+              <span>Regenerate</span>
+            </button>
+            <span className={`text-3xl font-black italic tracking-tighter ${theme === 'rose' ? 'text-rose-500' : theme === 'blue' ? 'text-primary' : 'text-amber-400'}`}>
+              {(score * 10).toFixed(1)}
+            </span>
+          </div>
           <span className="text-[9px] text-white/20 font-bold -mt-1 uppercase">Avg Score</span>
         </div>
       </div>
@@ -141,7 +169,8 @@ export function AnalysisResults({
   selectedContexts = [],
   toggleContext,
   persistedBriefs: externalBriefs = [],
-  setPersistedBriefs
+  setPersistedBriefs,
+  onDataUpdate
 }: { 
   results?: any[], 
   roadmap?: any[],
@@ -150,7 +179,8 @@ export function AnalysisResults({
   selectedContexts?: { id: string, type: string, target: string, text?: string, index?: number }[],
   toggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void,
   persistedBriefs?: any[],
-  setPersistedBriefs?: (briefs: any[]) => void
+  setPersistedBriefs?: (briefs: any[]) => void,
+  onDataUpdate?: () => void
 }) {
   const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
   const [isViewAll, setIsViewAll] = useState(false);
@@ -159,6 +189,21 @@ export function AnalysisResults({
   const generatedBriefs = externalBriefs;
   const setGeneratedBriefs = setPersistedBriefs || (() => {});
   const [briefsView, setBriefsView] = useState<"selection" | "loading" | "result">("selection");
+
+  const handleRegenerateAnalysis = async (component: string) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/analysis/regenerate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ component })
+      });
+      if (response.ok) {
+        if (onDataUpdate) onDataUpdate();
+      }
+    } catch (error) {
+      console.error("Failed to regenerate analysis:", error);
+    }
+  };
 
   const selectedIds = selectedContexts.map(c => c.id);
 
@@ -246,10 +291,11 @@ export function AnalysisResults({
               onClearHighlight={() => removeHighlight && removeHighlight(res.title)}
               selectedIds={selectedIds}
               onToggleContext={toggleContext}
+              onRegenerate={handleRegenerateAnalysis}
             />
           ))}
         </div>
-        <OptimizationRoadmap data={externalRoadmap} selectedIds={selectedIds} onToggleContext={toggleContext} />
+        <OptimizationRoadmap data={externalRoadmap} selectedIds={selectedIds} onToggleContext={toggleContext} onDataUpdate={onDataUpdate} />
         <NewBriefRecommendation 
           analysisResults={results} 
           persistedBriefs={generatedBriefs}
@@ -334,6 +380,7 @@ export function AnalysisResults({
                     onClearHighlight={() => removeHighlight && removeHighlight(res.title)}
                     selectedIds={selectedIds}
                     onToggleContext={toggleContext}
+                    onRegenerate={handleRegenerateAnalysis}
                   />
                 ))}
               </div>
@@ -364,7 +411,7 @@ export function AnalysisResults({
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className="space-y-12"
             >
-              <OptimizationRoadmap data={externalRoadmap} selectedIds={selectedIds} onToggleContext={toggleContext} />
+              <OptimizationRoadmap data={externalRoadmap} selectedIds={selectedIds} onToggleContext={toggleContext} onDataUpdate={onDataUpdate} />
               
               <div className="flex justify-center pt-12">
                 <button 

@@ -158,6 +158,7 @@ export default function App() {
               removeHighlight={removeHighlight}
               selectedContexts={selectedContexts}
               toggleContext={toggleContext}
+              onDataUpdate={refreshData}
             />
           ) : (
             <DashboardView 

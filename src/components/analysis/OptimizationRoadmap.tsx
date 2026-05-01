@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Wand2, Lightbulb, Sparkles } from "lucide-react";
+import { Wand2, Lightbulb, Sparkles, RefreshCw, Loader2 } from "lucide-react";
 
 interface RecommendationCardProps {
   title: string;
@@ -9,9 +9,23 @@ interface RecommendationCardProps {
   delay: number;
   selectedIds?: string[];
   onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void;
+  onRegenerate?: (component: string) => Promise<void>;
 }
 
-function RecommendationCard({ title, theme, points, delay, selectedIds = [], onToggleContext }: RecommendationCardProps) {
+function RecommendationCard({ title, theme, points, delay, selectedIds = [], onToggleContext, onRegenerate }: RecommendationCardProps) {
+  const [isRegenerating, setIsRegenerating] = useState(false);
+
+  const handleRegenerate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onRegenerate) return;
+    setIsRegenerating(true);
+    try {
+      await onRegenerate(title);
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
+
   const sectionId = `roadmap-${title}-`;
   const isSectionSelected = selectedIds.includes(sectionId);
 
@@ -55,14 +69,29 @@ function RecommendationCard({ title, theme, points, delay, selectedIds = [], onT
         <Sparkles size={120} />
       </div>
 
-      <div className="flex items-center space-x-4 relative z-10">
-        <div className={`p-4 rounded-3xl bg-white/5 border border-white/10 ${currentStyle.accent}`}>
-          <Wand2 size={32} strokeWidth={1.5} />
+      <div className="flex items-center justify-between relative z-10">
+        <div className="flex items-center space-x-4">
+          <div className={`p-4 rounded-3xl bg-white/5 border border-white/10 ${currentStyle.accent}`}>
+            <Wand2 size={32} strokeWidth={1.5} />
+          </div>
+          <div>
+            <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ${currentStyle.accentMuted}`}> Roadmap for improvement</span>
+            <h3 className="text-3xl font-black text-white tracking-tighter">{title} Optimization</h3>
+          </div>
         </div>
-        <div>
-          <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ${currentStyle.accentMuted}`}> Roadmap for improvement</span>
-          <h3 className="text-3xl font-black text-white tracking-tighter">{title} Optimization</h3>
-        </div>
+
+        <button 
+          onClick={handleRegenerate}
+          disabled={isRegenerating}
+          className="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/5 text-[10px] font-bold uppercase tracking-widest text-white/20 hover:text-white hover:bg-white/10 transition-all disabled:opacity-30"
+        >
+          {isRegenerating ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <RefreshCw size={14} />
+          )}
+          <span>Regenerate</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
@@ -107,13 +136,30 @@ function RecommendationCard({ title, theme, points, delay, selectedIds = [], onT
 export function OptimizationRoadmap({ 
   data: externalData,
   selectedIds = [],
-  onToggleContext
+  onToggleContext,
+  onDataUpdate
 }: { 
   data?: any[],
   selectedIds?: string[],
-  onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void
+  onToggleContext?: (context: { type: string, target: string, text?: string, index?: number }) => void,
+  onDataUpdate?: () => void
 }) {
   const [activeRec, setActiveRec] = useState(0);
+
+  const handleRegenerateRoadmap = async (component: string) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/roadmap/regenerate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ component })
+      });
+      if (response.ok) {
+        if (onDataUpdate) onDataUpdate();
+      }
+    } catch (error) {
+      console.error("Failed to regenerate roadmap:", error);
+    }
+  };
 
   const defaultRecommendations = [
     { 
@@ -190,6 +236,7 @@ export function OptimizationRoadmap({
             delay={0.2}
             selectedIds={selectedIds}
             onToggleContext={onToggleContext}
+            onRegenerate={handleRegenerateRoadmap}
           />
         </motion.div>
       </AnimatePresence>
