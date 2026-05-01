@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Send, Sparkles, User, Bot } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -164,7 +165,18 @@ export function AIChatAgent({ onDataUpdate, setHighlight }: AIChatAgentProps) {
                         ? 'bg-primary text-white rounded-tr-none' 
                         : 'bg-white/5 text-white/80 border border-white/5 rounded-tl-none'
                     }`}>
-                      {msg.text}
+                      <div className="prose prose-invert prose-sm max-w-none">
+                        <ReactMarkdown 
+                          components={{
+                            ul: ({node, ...props}) => <ul className="list-disc ml-4 space-y-1" {...props} />,
+                            li: ({node, ...props}) => <li className="marker:text-indigo-400" {...props} />,
+                            p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                            strong: ({node, ...props}) => <strong className="text-white font-bold" {...props} />
+                          }}
+                        >
+                          {msg.text}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 </motion.div>

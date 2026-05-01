@@ -90,7 +90,7 @@ export function UploadView({
     return () => clearTimeout(timer);
   }, [isProcessing, logs, isFinished]);
 
-  const springConfig = { type: "spring", stiffness: 300, damping: 30, mass: 1 };
+  const springConfig = { type: "spring", stiffness: 300, damping: 30, mass: 1 } as const;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 relative">
