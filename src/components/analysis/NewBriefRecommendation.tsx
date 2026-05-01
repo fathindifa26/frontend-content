@@ -73,14 +73,24 @@ function BriefCard({ index, total, title, hook, story }: { key?: any; index: num
   );
 }
 
-export function NewBriefRecommendation({ analysisResults }: { analysisResults: any[] }) {
-  const [view, setView] = useState<"selection" | "loading" | "result">("selection");
+export function NewBriefRecommendation({ 
+  analysisResults,
+  persistedBriefs,
+  setPersistedBriefs,
+  persistedView,
+  setPersistedView
+}: { 
+  analysisResults: any[],
+  persistedBriefs: any[],
+  setPersistedBriefs: (b: any[]) => void,
+  persistedView: "selection" | "loading" | "result",
+  setPersistedView: (v: "selection" | "loading" | "result") => void
+}) {
   const [mode, setMode] = useState<"improve" | "new">("new");
-  const [briefs, setBriefs] = useState<any[]>([]);
   const [current, setCurrent] = useState(0);
 
   const handleGenerate = async () => {
-    setView("loading");
+    setPersistedView("loading");
     try {
       const response = await fetch("http://localhost:8000/api/analysis/brief", {
         method: "POST",
@@ -88,21 +98,21 @@ export function NewBriefRecommendation({ analysisResults }: { analysisResults: a
         body: JSON.stringify({ mode, results: analysisResults })
       });
       const data = await response.json();
-      setBriefs(data);
-      setView("result");
+      setPersistedBriefs(data);
+      setPersistedView("result");
     } catch (error) {
       console.error("Failed to generate brief:", error);
-      setView("selection");
+      setPersistedView("selection");
     }
   };
 
-  const next = () => setCurrent((c) => (c + 1) % briefs.length);
-  const prev = () => setCurrent((c) => (c - 1 + briefs.length) % briefs.length);
+  const next = () => setCurrent((c) => (c + 1) % persistedBriefs.length);
+  const prev = () => setCurrent((c) => (c - 1 + persistedBriefs.length) % persistedBriefs.length);
 
   return (
     <div className="space-y-12 max-w-5xl mx-auto w-full pt-12">
       <AnimatePresence mode="wait">
-        {view === "selection" && (
+        {persistedView === "selection" && (
           <motion.div
             key="selection"
             initial={{ opacity: 0, y: 20 }}
@@ -160,7 +170,7 @@ export function NewBriefRecommendation({ analysisResults }: { analysisResults: a
           </motion.div>
         )}
 
-        {view === "loading" && (
+        {persistedView === "loading" && (
           <motion.div
             key="loading"
             initial={{ opacity: 0 }}
@@ -180,7 +190,7 @@ export function NewBriefRecommendation({ analysisResults }: { analysisResults: a
           </motion.div>
         )}
 
-        {view === "result" && (
+        {persistedView === "result" && (
           <motion.div
             key="result"
             initial={{ opacity: 0 }}
@@ -189,7 +199,7 @@ export function NewBriefRecommendation({ analysisResults }: { analysisResults: a
           >
             <div className="flex items-center justify-between px-4">
               <button 
-                onClick={() => setView("selection")}
+                onClick={() => setPersistedView("selection")}
                 className="flex items-center space-x-2 text-white/40 hover:text-white transition-colors group"
               >
                 <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
@@ -208,14 +218,14 @@ export function NewBriefRecommendation({ analysisResults }: { analysisResults: a
 
             <BriefCard 
               index={current}
-              total={briefs.length}
-              title={briefs[current]?.title}
-              hook={briefs[current]?.hook}
-              story={briefs[current]?.story}
+              total={persistedBriefs.length}
+              title={persistedBriefs[current]?.title}
+              hook={persistedBriefs[current]?.hook}
+              story={persistedBriefs[current]?.story}
             />
 
             <div className="flex justify-center space-x-2">
-              {briefs.map((_, i) => (
+              {persistedBriefs.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}

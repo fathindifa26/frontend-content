@@ -104,6 +104,10 @@ function ResultCard({ title, icon: Icon, theme, score, points, delay }: ResultCa
 export function AnalysisResults({ results: externalResults, roadmap: externalRoadmap }: { results?: any[], roadmap?: any[] }) {
   const [activeSection, setActiveSection] = useState<"results" | "roadmap" | "brief">("results");
   const [isViewAll, setIsViewAll] = useState(false);
+  
+  // Persisted state for New Briefs
+  const [generatedBriefs, setGeneratedBriefs] = useState<any[]>([]);
+  const [briefsView, setBriefsView] = useState<"selection" | "loading" | "result">("selection");
 
   const showAll = () => {
     setIsViewAll(true);
@@ -185,7 +189,13 @@ export function AnalysisResults({ results: externalResults, roadmap: externalRoa
           ))}
         </div>
         <OptimizationRoadmap data={externalRoadmap} />
-        <NewBriefRecommendation analysisResults={results} />
+        <NewBriefRecommendation 
+          analysisResults={results} 
+          persistedBriefs={generatedBriefs}
+          setPersistedBriefs={setGeneratedBriefs}
+          persistedView={briefsView}
+          setPersistedView={setBriefsView}
+        />
       </div>
     );
   }
@@ -310,13 +320,19 @@ export function AnalysisResults({ results: externalResults, roadmap: externalRoa
 
           {activeSection === "brief" && (
             <motion.div
-              key="brief"
+              key="brief-section"
               initial={{ opacity: 0, x: 20, filter: "blur(10px)" }}
               animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: -20, filter: "blur(10px)" }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
-              <NewBriefRecommendation analysisResults={results} />
+              <NewBriefRecommendation 
+                analysisResults={results} 
+                persistedBriefs={generatedBriefs}
+                setPersistedBriefs={setGeneratedBriefs}
+                persistedView={briefsView}
+                setPersistedView={setBriefsView}
+              />
             </motion.div>
           )}
         </AnimatePresence>
