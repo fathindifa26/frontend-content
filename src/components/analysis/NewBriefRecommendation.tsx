@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { PenTool, Sparkles, ChevronLeft, ChevronRight, FileText, Wand2, RefreshCw, PlusCircle, ArrowLeft, Loader2, Copy, CheckCircle2 } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 import { API_BASE_URL } from "../../config";
 
 function BriefCard({ 
@@ -137,9 +138,9 @@ function BriefCard({
               <div className="h-px w-8 bg-indigo-500/30" />
               <span className="text-[10px] font-black text-indigo-400/50 uppercase tracking-widest">Full Storyline & Core Value</span>
             </div>
-            <p className="text-[15px] text-white/60 leading-relaxed font-medium">
-              {story}
-            </p>
+            <div className="text-[15px] text-white/60 leading-relaxed font-medium prose prose-invert prose-sm max-w-none">
+              <ReactMarkdown>{story}</ReactMarkdown>
+            </div>
           </div>
 
           {!fullPrompt && (
